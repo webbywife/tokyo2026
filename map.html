@@ -224,6 +224,7 @@
     3: { label: "Day 3 · Sat 12 — Nikkō",    color: "#2E7D4F" },
     4: { label: "Day 4 · Sun 13 — Kamakura", color: "#6B4FB0" },
     5: { label: "Rain plan — in Tokyo",      color: "#6E6A66" },
+    6: { label: "Quieter picks & swaps",     color: "#3F7E7E" },
   };
 
   const places = [
@@ -270,6 +271,30 @@
     { day:5, time:"any", name:"Nakano Broadway", lat:35.70760, lon:139.66570, note:"Covered 1960s mall — vintage manga, watches, retro toys, Mandarake. Rainy-day rabbit hole", transport:"1 stop from Shinjuku on the Chūō line", shop:true },
     { day:5, time:"any", name:"Thermae-Yu onsen, Shinjuku", lat:35.69550, lon:139.70200, note:"Full hot-spring complex in Kabukichō — indoor + covered outdoor baths, saunas. Soak out a storm", transport:"~10-min walk from the hotel" },
     { day:5, time:"any", name:"Sumida Aquarium (under Skytree)", lat:35.70980, lon:139.81070, note:"Mall-connected — jellyfish, penguins, a big open tank. Arrive, stay 3 hours, never go outside", transport:"Hanzōmon line to Oshiage" },
+
+    // Quieter picks — add-ons to the scheduled days
+    { day:6, time:"add-on", name:"Sankeien Garden, Yokohama", lat:35.42470, lon:139.65520, note:"175,000 m² historic garden of relocated old buildings + a Kyoto pagoda — barely a foreign face. Day 1 swap", transport:"bus from Yokohama Stn ~25 min", shop:false },
+    { day:6, time:"add-on", name:"Yamate Bluff, Yokohama", lat:35.43600, lon:139.64800, note:"The old foreign quarter above Chinatown — merchant houses, Bluff churches, hill cemetery with a harbour view. Day 1", transport:"walk up from Motomachi-Chūkagai Stn" },
+    { day:6, time:"add-on", name:"Onshi Hakone Park", lat:35.19350, lon:139.02470, note:"Former imperial retreat on a Lake Ashi peninsula — best lake-and-Fuji view of the loop, almost nobody there. Day 2", transport:"10-min walk from Moto-Hakone pier" },
+    { day:6, time:"add-on", name:"Amazake-chaya, old Tōkaidō", lat:35.18970, lon:139.04300, note:"360-year-old thatched teahouse on a cedar-lined stretch of the old highway — sweet sake, 13 generations. Day 2, on the pass", transport:"Free-Pass bus, Amazake-chaya stop" },
+    { day:6, time:"add-on", name:"Pola Museum of Art, Hakone", lat:35.25130, lon:139.03300, note:"Monet & Picasso in a glass building sunk into the forest + a sculpture trail — calmer than the Open-Air Museum. Day 2", transport:"bus from Gōra ~13 min" },
+    { day:6, time:"add-on", name:"Takino-o Shrine path, Nikkō", lat:36.76220, lon:139.59050, note:"Mossy stone path along a stream to an ancient shrine behind Tōshō-gū — tour groups gone 100 m in. Day 3", transport:"15-min walk behind Tōshō-gū" },
+    { day:6, time:"add-on", name:"Tamozawa Imperial Villa, Nikkō", lat:36.75050, lon:139.59600, note:"106-room wooden villa mixing Edo/Meiji/Taishō around a garden — often nearly empty. Rainy-day swap for the falls. Day 3", transport:"near Shinkyō Bridge" },
+    { day:6, time:"add-on", name:"Kirifuri Falls, Nikkō", lat:36.75900, lon:139.63400, note:"Two-tiered 75 m waterfall with a quiet deck and short trail — a fraction of Kegon's crowds, no switchback bus. Day 3", transport:"bus ~10 min from Tōbu-Nikkō" },
+    { day:6, time:"add-on", name:"Engaku-ji, Kita-Kamakura", lat:35.33780, lon:139.54700, note:"Great Zen monastery — vast wooded precinct, huge gate and bell. Enter Kamakura here for the calm version. Day 4", transport:"one JR stop before Kamakura" },
+    { day:6, time:"add-on", name:"Hōkoku-ji bamboo grove, Kamakura", lat:35.31790, lon:139.57220, note:"~2,000 moso bamboo with a tea house at the back — matcha among the stalks, a fraction of Arashiyama's crowds. Day 4", transport:"bus ~10 min east of Kamakura Stn" },
+    { day:6, time:"add-on", name:"Sugimoto-dera, Kamakura", lat:35.31990, lon:139.57060, note:"Kamakura's oldest temple — a thatched hall up moss-slick stone steps. In-the-know only. Day 4", transport:"near Hōkoku-ji" },
+
+    // Quieter picks — whole-day swaps out of Tokyo
+    { day:6, time:"swap", name:"Chichibu (Saitama)", lat:35.99900, lon:139.08550, note:"Seibu Laview express ~80 min from Ikebukuro. Nagatoro gorge boats, Chichibu Shrine, Hitsujiyama Park, sake breweries", transport:"Seibu-Chichibu Line" },
+    { day:6, time:"swap", name:"Nagatoro gorge", lat:36.10900, lon:139.11300, note:"River-boat runs through the Iwadatami rock shelves + a steam-train line. Boats stop in high water", transport:"Chichibu Railway from Chichibu, ~15 min" },
+    { day:6, time:"swap", name:"Okutama (west Tokyo)", lat:35.80930, lon:139.09660, note:"JR Ōme line ~2 h. Base for the Hatonosu gorge trail and Lake Okutama", transport:"JR Chūō + Ōme line" },
+    { day:6, time:"swap", name:"Nippara Limestone Caves", lat:35.85600, lon:139.01700, note:"Big show-cave, 11 °C inside year-round — an all-weather and hot-day pick", transport:"bus ~30 min from Okutama Stn" },
+    { day:6, time:"swap", name:"Sawara canal town (Chiba)", lat:35.89700, lon:140.49900, note:"'Little Edo of the East' — willow-lined merchant canal, boat rides, the Inō Tadataka museum. JR ~90 min", transport:"JR Narita line to Sawara" },
+    { day:6, time:"swap", name:"Katori Jingū", lat:35.88400, lon:140.52800, note:"One of Japan's three great shrines — ancient, deep-forested, almost no tourists. Pair with Sawara", transport:"bus/taxi from Sawara Stn" },
+    { day:6, time:"swap", name:"Mt Takao (Takaosanguchi)", lat:35.63200, lon:139.26900, note:"Keiō line ~50 min, ¥390. Cable car, a slope temple, easy hikes, Fuji from the top on a clear day", transport:"Keiō Takao line terminus" },
+    { day:6, time:"swap", name:"Kawagoe — Kurazukuri street", lat:35.92500, lon:139.48500, note:"'Little Edo' — warehouse street, bell tower, candy alley, 540 stone rakan at Kita-in. ~40 min from Shinjuku", transport:"Tōbu Tōjō / Seibu Shinjuku / JR", shop:true },
+    { day:6, time:"swap", name:"Nokogiriyama (Bōsō, Chiba)", lat:35.15900, lon:139.82900, note:"Ropeway to a cliff-edge 'Hell Lookout,' a 31 m hillside Buddha, 1,500 carved rakan — and empty. Ropeway stops in wind", transport:"JR to Hamakanaya, or Tokyo-Bay ferry from Kurihama" },
   ];
 
   const transitPlaces = [
@@ -317,8 +342,13 @@
     });
   }
 
+  const OFF_BY_DEFAULT = new Set(['6']); // "Quieter picks" starts hidden to keep the map readable
+
   const dayLayers = {};
-  Object.keys(days).forEach(d => dayLayers[d] = L.layerGroup().addTo(map));
+  Object.keys(days).forEach(d => {
+    dayLayers[d] = L.layerGroup();
+    if (!OFF_BY_DEFAULT.has(String(d))) dayLayers[d].addTo(map);
+  });
 
   places.forEach(p => {
     const color = days[p.day].color;
@@ -361,11 +391,11 @@
 
   // Filter buttons
   const filtersEl = document.getElementById('filters');
-  const activeDays = new Set(Object.keys(days).map(Number));
+  const activeDays = new Set(Object.keys(days).map(Number).filter(d => !OFF_BY_DEFAULT.has(String(d))));
 
   Object.entries(days).forEach(([d, info]) => {
     const btn = document.createElement('button');
-    btn.className = 'filter-btn';
+    btn.className = 'filter-btn' + (OFF_BY_DEFAULT.has(String(d)) ? ' off' : '');
     btn.innerHTML = `<span class="dot" style="background:${info.color}"></span>${info.label}`;
     btn.addEventListener('click', () => {
       const dayNum = Number(d);
@@ -402,8 +432,8 @@
     filtersEl.appendChild(btn);
   });
 
-  // Fit bounds to all markers initially
-  const allLatLngs = places.map(p => [p.lat, p.lon]);
+  // Fit bounds to the scheduled trips (skip the hidden "Quieter picks" so the view stays tight)
+  const allLatLngs = places.filter(p => p.day !== 6).map(p => [p.lat, p.lon]);
   map.fitBounds(allLatLngs, { padding: [30,30] });
 </script>
 </body>
