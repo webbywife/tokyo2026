@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tokyo 2026 — Itinerary</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --panel:#FBF7F3;
+    --panel-2:#F1E4DE;
+    --pink:#C0362C;
+    --pink-light:#E3A69E;
+    --gold:#2E3A57;
+    --lavender:#6B4E71;
+    --text:#2A2622;
+    --text-dim:#6E625A;
+    --line: rgba(42,38,34,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(192,54,44,0.07), transparent 40%),
+      radial-gradient(circle at 88% 18%, rgba(107,78,113,0.06), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    padding:56px 20px 80px;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.87), rgba(255,255,255,0.9)),
+      url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/1280px-Skyscrapers_of_Shinjuku_2009_January.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 25px;
+    background: rgb(255 255 255 / 92%);
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 40px rgba(42,38,34,0.10);
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  /* ===== HERO ===== */
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.18em;
+    color:var(--pink);
+    text-transform:uppercase;
+    margin-bottom:14px;
+    font-weight:500;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:56px;
+    line-height:1.05;
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  h1 span{color:var(--pink);}
+  .subhead{
+    color:var(--text-dim);
+    font-size:18px;
+    max-width:580px;
+    margin:0 0 34px;
+    line-height:1.65;
+  }
+
+  /* ===== BOARDING PASS ===== */
+  .pass-row{display:flex; gap:10px; margin-bottom:18px;}
+  .pass{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    display:flex;
+    overflow:hidden;
+    flex:1;
+    box-shadow: 0 2px 10px rgba(42,38,34,0.05);
+  }
+  .pass-seg{flex:1;padding:12px 16px;}
+  .pass-seg + .pass-seg{border-left:1px dashed rgba(42,38,34,0.18);}
+  .pass-route{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    margin:0 0 3px;
+  }
+  .pass-route .arrow{color:var(--pink); padding:0 4px;}
+  .pass-date{font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--gold); margin-bottom:8px;}
+  .pass-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px 10px;}
+  .pass-item .k{font-size:9px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-dim); margin-bottom:1px;}
+  .pass-item .v{font-family:'JetBrains Mono', monospace; font-size:11.5px; color:var(--text);}
+  .pass-stub{
+    width:74px;
+    background:var(--panel-2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    padding:10px 6px;
+    text-align:center;
+  }
+  .pass-stub .tag{font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--text-dim); line-height:1.3;}
+  .pass-stub .flight{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:13px; color:var(--pink);}
+
+  /* ===== STATS ===== */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:26px 0 18px;
+  }
+  .stat{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 14px;
+    text-align:center;
+    box-shadow: 0 2px 10px rgba(42,38,34,0.05);
+  }
+  .stat .num{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:28px; color:var(--gold);}
+  .stat .lbl{font-size:12.5px; color:var(--text-dim); margin-top:5px;}
+
+  .meaning{
+    margin-top:12px;
+    border-left:2px solid var(--pink);
+    padding:12px 18px;
+    font-size:15px;
+    color:var(--text-dim);
+    background:rgba(192,54,44,0.05);
+    border-radius:0 10px 10px 0;
+  }
+  .meaning b{color:var(--text);}
+
+  .hiccup{
+    margin-top:12px;
+    border-left:2px solid var(--gold);
+    padding:12px 18px;
+    font-size:14.5px;
+    color:var(--text-dim);
+    background:rgba(46,58,87,0.06);
+    border-radius:0 10px 10px 0;
+  }
+  .hiccup b{color:var(--text);}
+  .hiccup ul{margin:8px 0 0; padding-left:18px;}
+  .hiccup li{margin-bottom:6px; line-height:1.5;}
+  .hiccup li:last-child{margin-bottom:0;}
+
+  /* ===== TABS ===== */
+  .tabbar{
+    display:flex;
+    gap:8px;
+    margin:36px 0 0;
+    overflow-x:auto;
+    padding-bottom:4px;
+    scrollbar-width:thin;
+  }
+  .tab{
+    flex:1 0 auto;
+    min-width:118px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px 12px 0 0;
+    padding:12px 14px;
+    text-align:left;
+    cursor:pointer;
+    font-family:'Inter', sans-serif;
+    color:var(--text-dim);
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .tab:hover{background:var(--panel-2);}
+  .tab .t-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:3px;
+  }
+  .tab .t-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--text);
+    line-height:1.3;
+  }
+  .tab.active{
+    background:var(--pink);
+    border-color:var(--pink);
+  }
+  .tab.active .t-num{color:#FFFFFF;}
+  .tab.active .t-title{color:#FFFFFF;}
+
+  .panels{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:0 14px 14px 14px;
+    padding:26px 26px 30px;
+    box-shadow: 0 2px 10px rgba(42,38,34,0.05);
+  }
+  .day-panel{display:none;}
+  .day-panel.active{display:block;}
+
+  .day-head{margin-bottom:14px;}
+  .day-date{font-family:'JetBrains Mono', monospace; font-size:13.5px; color:var(--text-dim); letter-spacing:0.06em; text-transform:uppercase;}
+  .day-title{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:30px; margin:4px 0 0;}
+  .day-title .kr{color:var(--text-dim); font-size:16px; font-weight:500; margin-left:8px;}
+
+  .weather{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-top:16px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 18px;
+  }
+  .weather .temp{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--gold);
+    white-space:nowrap;
+  }
+  .weather .temp span{color:var(--pink); font-size:14px; font-weight:500;}
+  .weather .wdesc{font-size:14.5px; color:var(--text-dim); line-height:1.55;}
+  .weather .wdesc b{color:var(--text); font-weight:600;}
+  .weather .wsource{display:block; margin-top:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:0.02em; color:var(--text-dim); opacity:0.75;}
+  .outfit-photos{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .outfit-photo-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+  }
+  .outfit-photo{
+    width:118px;
+    height:118px;
+    border-radius:12px;
+    object-fit:cover;
+    object-position:center;
+    flex-shrink:0;
+    border:1px solid var(--line);
+    cursor:zoom-in;
+    transition:opacity 0.15s ease;
+  }
+  .outfit-photo:hover{opacity:0.85;}
+  .outfit-photo-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.04em;
+    color:var(--text-dim);
+  }
+
+  .lightbox{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,12,10,0.82);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{
+    max-width:min(600px, 92vw);
+    max-height:88vh;
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .lightbox-close{
+    position:absolute;
+    top:18px;
+    right:22px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:none;
+    background:rgba(255,255,255,0.15);
+    color:#fff;
+    font-size:20px;
+    line-height:1;
+    cursor:pointer;
+  }
+  .lightbox-close:hover{background:rgba(255,255,255,0.28);}
+  .outfit{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-content:flex-start;
+    margin-top:10px;
+  }
+  .outfit .chip{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--lavender);
+    border:1px solid var(--lavender);
+    border-radius:999px;
+    padding:5px 12px;
+    white-space:nowrap;
+  }
+  @media (max-width:480px){
+    .outfit-photo{width:88px; height:88px;}
+  }
+
+  .day-media{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:16px;
+  }
+  .day-media img{
+    width:100%;
+    height:190px;
+    object-fit:cover;
+    border-radius:12px;
+    border:1px solid var(--line);
+    display:block;
+  }
+  .day-media iframe{
+    width:100%;
+    height:190px;
+    border:1px solid var(--line);
+    border-radius:12px;
+  }
+  .day-media .cap{
+    grid-column:1 / -1;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-top:-4px;
+  }
+  @media (max-width:600px){
+    .day-media{grid-template-columns:1fr;}
+  }
+
+  .stops{
+    margin-top:20px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:6px 18px;
+  }
+  .stop{
+    display:grid;
+    grid-template-columns:76px 1fr;
+    gap:14px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .stop:last-child{border-bottom:none;}
+  .stop .time{font-family:'JetBrains Mono', monospace; font-size:13.5px; color:var(--gold); padding-top:2px; font-weight:500;}
+  .stop .what{font-weight:500; font-size:16.5px; line-height:1.5;}
+  .stop .what b{font-weight:600;}
+  .stop .note{color:var(--text-dim); font-size:14.5px; margin-top:4px; line-height:1.55;}
+  .stop-thumb{
+    width:100%;
+    max-height:130px;
+    object-fit:cover;
+    border-radius:10px;
+    margin:8px 0 2px;
+    display:block;
+    border:1px solid var(--line);
+  }
+  .pin{
+    margin-left:8px;
+    font-size:12px;
+    font-weight:500;
+    color:var(--pink);
+    text-decoration:none;
+    border-bottom:1px dotted var(--pink);
+    white-space:nowrap;
+  }
+  .pin:hover{opacity:0.7;}
+  .stop .cost{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:500;
+    color:var(--pink);
+    background:var(--panel-2);
+    border-radius:999px;
+    padding:2px 9px;
+    margin-left:8px;
+    vertical-align:1px;
+  }
+
+  /* ===== OPTION CARDS ===== */
+  .opt-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin:10px 0 6px;
+  }
+  .opt-grid{display:flex; flex-direction:column; gap:8px;}
+  .opt-card{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 14px 12px;
+    cursor:pointer;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .opt-card:hover{border-color:var(--pink-light);}
+  .opt-card.pick{border-color:var(--pink); background:var(--panel-2);}
+  .opt-hint{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--text-dim);
+    margin:-18px 0 26px;
+  }
+  .opt-top{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+  .opt-name{font-weight:600; font-size:15px;}
+  .opt-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--pink);
+    border-radius:999px;
+    padding:2px 8px;
+    white-space:nowrap;
+  }
+  .opt-meta{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--gold);
+    margin:5px 0 6px;
+  }
+  .opt-note{font-size:13.5px; color:var(--text-dim); line-height:1.5;}
+  .opt-card .pin{margin-left:0; display:inline-block; margin-top:6px;}
+
+  .nav-btns{
+    display:flex;
+    justify-content:space-between;
+    margin-top:22px;
+  }
+  .nav-btn{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    color:var(--pink);
+    background:none;
+    border:1px solid var(--pink);
+    border-radius:999px;
+    padding:9px 18px;
+    cursor:pointer;
+  }
+  .nav-btn:hover{background:rgba(192,54,44,0.08);}
+  .nav-btn:disabled{opacity:0.3; cursor:default;}
+  .nav-btn:disabled:hover{background:none;}
+
+  /* ===== FOOTER ===== */
+  .footer{
+    margin-top:40px;
+    border-top:1px solid var(--line);
+    padding-top:26px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .stamp{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--pink);
+    border:1px solid var(--pink);
+    border-radius:999px;
+    padding:8px 16px;
+    letter-spacing:0.06em;
+  }
+  .tag-line{font-size:14.5px; color:var(--text-dim); max-width:420px; line-height:1.65;}
+
+  /* ===== BUDGET TAB ===== */
+  .ctrl-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;}
+  .ctrl{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .ctrl label{font-size:13.5px; color:var(--text-dim); white-space:nowrap;}
+  .ctrl input[type=number]{
+    width:68px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--text);
+    font-family:'JetBrains Mono', monospace;
+    font-size:14.5px;
+    padding:7px 9px;
+    text-align:right;
+  }
+  .ctrl input[type=number]:focus{outline:1px solid var(--pink);}
+
+  .budget-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:24px;
+  }
+  .bstat{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px;
+    text-align:center;
+  }
+  .bstat .num{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px; color:var(--gold);}
+  .bstat .lbl{font-size:12px; color:var(--text-dim); margin-top:4px;}
+
+  .budget-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:20px; align-items:start;}
+  .bcard{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px;
+  }
+  .bcard h3{font-family:'Space Grotesk', sans-serif; font-size:17px; margin:0 0 16px; font-weight:700;}
+
+  .cat{margin-bottom:16px;}
+  .cat:last-child{margin-bottom:0;}
+  .cat-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .cat-head .name{font-size:12.5px; letter-spacing:0.04em; text-transform:uppercase; color:var(--pink); font-weight:600;}
+  .cat-head .sub{font-family:'JetBrains Mono', monospace; font-size:13.5px; color:var(--text-dim); font-weight:500;}
+
+  .brow{display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--line); gap:10px;}
+  .brow:last-child{border-bottom:none;}
+  .brow .label{font-size:15px; color:var(--text);}
+  .brow .label small{display:block; color:var(--text-dim); font-size:12.5px; margin-top:2px;}
+  .brow .amount{display:flex; align-items:center; gap:4px; font-family:'JetBrains Mono', monospace; font-size:15px;}
+  .brow .amount span.cur{color:var(--text-dim);}
+  .brow input[type=number]{
+    width:74px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--text);
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    padding:6px 8px;
+    text-align:right;
+  }
+  .brow input[type=number]:focus{outline:1px solid var(--pink);}
+
+  .btotal-line{display:flex; justify-content:space-between; align-items:center; margin-top:18px; padding-top:14px; border-top:1px solid var(--line);}
+  .btotal-line .t-label{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:16px;}
+  .btotal-line .t-amount{font-family:'JetBrains Mono', monospace; font-weight:700; font-size:23px; color:var(--pink);}
+
+  .chart-wrap{position:relative; height:210px; margin-bottom:14px;}
+  .legend{display:flex; flex-direction:column; gap:8px;}
+  .legend-item{display:flex; align-items:center; justify-content:space-between; font-size:13.5px;}
+  .legend-item .left{display:flex; align-items:center; gap:8px;}
+  .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+  .legend-item .pct{font-family:'JetBrains Mono', monospace; color:var(--text-dim);}
+
+  @media (max-width:680px){
+    .budget-grid{grid-template-columns:1fr;}
+    .budget-stats{grid-template-columns:repeat(2,1fr);}
+  }
+
+  @media (max-width:600px){
+    h1{font-size:36px;}
+    .pass-row{flex-direction:column;}
+    .pass{flex-direction:column;}
+    .pass-seg + .pass-seg{border-left:none; border-top:1px dashed rgba(42,38,34,0.18);}
+    .pass-stub{width:100%; flex-direction:row; justify-content:space-between;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .stop{grid-template-columns:56px 1fr;}
+    .tab{min-width:96px;}
+    .weather{flex-direction:column; align-items:flex-start; gap:6px;}
+    .wrap{padding:16px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Trip log · MNL ⇄ HND · Sep 2026</div>
+  <h1>Tokyo <span>2026</span></h1>
+  <p class="subhead">Four days across Tokyo and one deep into the mountains at Hakone — old temples, neon alleys, a barefoot room of light, and Fuji from a pirate ship. Tap through each day below.</p>
+  <p class="opt-hint">Every time slot has 2–3 options — tap a card to make it your pick. Choices save automatically.</p>
+  <a class="nav-btn" href="map.html" style="display:inline-block; text-decoration:none; margin-bottom:18px;">🗺 View trip map</a>
+
+  <div class="pass-row">
+  <div class="pass">
+    <div class="pass-seg">
+      <p class="pass-route">MNL <span class="arrow">→</span> HND</p>
+      <p class="pass-date">WED 09 SEP 2026</p>
+      <div class="pass-grid">
+        <div class="pass-item"><div class="k">Depart</div><div class="v">23:30</div></div>
+        <div class="pass-item"><div class="k">Arrive</div><div class="v">04:45 +1</div></div>
+        <div class="pass-item"><div class="k">Terminal</div><div class="v">NAIA 1 → HND 3</div></div>
+      </div>
+    </div>
+    <div class="pass-stub">
+      <div class="tag">Philippine Airlines</div>
+      <div class="flight">PR 421</div>
+    </div>
+  </div>
+
+  <div class="pass">
+    <div class="pass-seg">
+      <p class="pass-route">HND <span class="arrow">→</span> MNL</p>
+      <p class="pass-date">MON 14 SEP 2026</p>
+      <div class="pass-grid">
+        <div class="pass-item"><div class="k">Depart</div><div class="v">01:00</div></div>
+        <div class="pass-item"><div class="k">Arrive</div><div class="v">05:05</div></div>
+        <div class="pass-item"><div class="k">Terminal</div><div class="v">HND 3 → NAIA 1</div></div>
+      </div>
+    </div>
+    <div class="pass-stub">
+      <div class="tag">Philippine Airlines</div>
+      <div class="flight">PR 422</div>
+    </div>
+  </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num">4</div><div class="lbl">days on the ground</div></div>
+    <div class="stat"><div class="num">3</div><div class="lbl">nights in Shinjuku</div></div>
+    <div class="stat"><div class="num">1</div><div class="lbl">day trip (Hakone)</div></div>
+    <div class="stat"><div class="num">~9h</div><div class="lbl">total flight time</div></div>
+  </div>
+
+  <div class="meaning" id="forecastNote"><b>On the forecast:</b> the numbers on each day below are climate averages for early-to-mid September in Tokyo — still summer, hot and humid (around 31&nbsp;°C by day, 24&nbsp;°C at night), high UV between clouds, and the tail of typhoon season, so a real chance of a heavy shower on any given day. <span id="forecastNoteLive"></span></div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab active" data-day="1"><span class="t-num mono">Day 1 · Thu 10</span><span class="t-title">Touchdown &amp; slow Shinjuku</span></button>
+    <button class="tab" data-day="2"><span class="t-num mono">Day 2 · Fri 11</span><span class="t-title">Old Tokyo: Asakusa &amp; Ueno</span></button>
+    <button class="tab" data-day="3"><span class="t-num mono">Day 3 · Sat 12</span><span class="t-title">Day trip: Hakone loop</span></button>
+    <button class="tab" data-day="4"><span class="t-num mono">Day 4 · Sun 13</span><span class="t-title">Shibuya, teamLab &amp; late flight</span></button>
+    <button class="tab" data-day="budget"><span class="t-num mono">Trip cost</span><span class="t-title">Budget</span></button>
+  </div>
+
+  <div class="panels">
+
+    <!-- ===================== DAY 1 ===================== -->
+    <div class="day-panel active" data-day="1">
+      <div class="day-head">
+        <div class="day-date">Thu · Sep 10</div>
+        <h1 class="day-title">Touchdown &amp; slow Shinjuku <span class="kr">木曜日</span></h1>
+        <div class="weather" data-forecast-date="2026-09-10">
+          <div class="temp" id="temp-1">31° <span>/ 24°C</span></div>
+          <div class="wdesc"><b id="wcond-1">Hot, humid, ~40% rain chance.</b> You land before dawn on a red-eye, so today stays inside a 2&nbsp;km circle around Shinjuku — one calm garden, one calm shrine, a real nap, an easy night.<span class="wsource" id="wsource-1"></span></div>
+        </div>
+        <div class="outfit-photos">
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/934063/pexels-photo-934063.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 1 — striped top, jeans, sunglasses" loading="lazy"><span class="outfit-photo-label">Idea 1</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/28645956/pexels-photo-28645956.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 2 — sneakers, sunglasses, tote bag" loading="lazy"><span class="outfit-photo-label">Idea 2</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/3944690/pexels-photo-3944690.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 3 — jeans, scarf, sneakers" loading="lazy"><span class="outfit-photo-label">Idea 3</span></div>
+        </div>
+        <div class="outfit">
+          <span class="chip">breathable tee</span>
+          <span class="chip">light layer for train AC</span>
+          <span class="chip">walking shoes</span>
+          <span class="chip">compact umbrella</span>
+        </div>
+        <div class="day-media">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/1280px-Skyscrapers_of_Shinjuku_2009_January.jpg" alt="Shinjuku skyline" loading="lazy">
+          <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=139.6850%2C35.6720%2C139.7200%2C35.6960&layer=mapnik&marker=35.6858%2C139.7009" loading="lazy" title="Map of today's stops"></iframe>
+          <div class="cap"><span>Shinjuku</span><span>Today's area</span></div>
+        </div>
+      </div>
+      <div class="stops">
+        <div class="stop"><div class="time">04:45</div><div>
+          <div class="what">Land at <b>Haneda Terminal 3</b><span class="cost">~$4–10 transport</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Haneda+Airport+Terminal+3" target="_blank" rel="noopener">Map ↗</a></div>
+          <img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/1280px-All_haneda.jpg" alt="Haneda Airport" loading="lazy">
+          <div class="note">Immigration + bags, buy a <b>Welcome Suica / PASMO Passport</b> at the machines, then head to Shinjuku. First trains and buses start around 05:15–05:30.</div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Airport Limousine Bus → Shinjuku</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~35–50 min, drops at Busta Shinjuku / Southern Tower</span><span>¥1,400 · ~$9</span></div><div class="opt-note">Easiest with luggage after a red-eye — one seat, no stairs, stops right by the hotel. First runs from ~05:20.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Busta+Shinjuku" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Keikyu + JR Yamanote</span></div><div class="opt-meta"><span>Keikyu to Shinagawa, transfer JR to Shinjuku · ~40 min</span><span>¥660 · ~$4.50</span></div><div class="opt-note">Cheapest and quick, but two escalator changes with bags. First Keikyu ~05:15.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Taxi, direct</span></div><div class="opt-meta"><span>~30–45 min at that hour</span><span>¥7,000–9,000 · ~$50–60</span></div><div class="opt-note">Only worth it split 3–4 ways — door to door, no transfers while you're wrecked.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">06:15</div><div><div class="what">Bag drop at <b>Odakyu Hotel Century Southern Tower</b><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Odakyu+Hotel+Century+Southern+Tower" target="_blank" rel="noopener">Map ↗</a></div><div class="note">Check-in isn't until 15:00 — the front desk holds luggage. Directly above Shinjuku Station's South Exit; your base for all 3 nights, and the Odakyu line downstairs is the Hakone train on Day 3.</div></div></div>
+        <div class="stop"><div class="time">06:45</div><div>
+          <div class="what">Early breakfast near the station<span class="cost">~$3–10 food</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Café on Shinjuku Southern Terrace</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~2-min walk from the hotel</span><span>$6–9</span></div><div class="opt-note">A bakery-café on the terrace deck opens around 07:00 — AC, coffee, a quiet corner to sit while the city wakes up.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Standing soba in the station</span></div><div class="opt-meta"><span>inside the JR / Odakyu concourse</span><span>¥400–600 · ~$3–4</span></div><div class="opt-note">Hot kake or kakiage soba eaten standing at the counter in 10 minutes — the real first-morning-in-Japan move.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Conbini + a park bench</span></div><div class="opt-meta"><span>7-Eleven / Lawson by the hotel</span><span>¥500–800 · ~$4–6</span></div><div class="opt-note">Onigiri, egg sando, bottled coffee — carry it to Shinjuku Gyoen and eat on the lawn when the gate opens.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">09:00</div><div><div class="what">Slow morning at <b>Shinjuku Gyoen National Garden</b><span class="cost">¥500 · ~$4 admission</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Shinjuku+Gyoen+National+Garden" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Shinjuku_Gyoen_National_Garden_-_sakura_3.JPG/1280px-Shinjuku_Gyoen_National_Garden_-_sakura_3.JPG" alt="Shinjuku Gyoen" loading="lazy"><div class="note">Opens 09:00, closed Mondays (fine — it's Thursday). Wide lawns, a formal French garden, a greenhouse. The lowest-effort way to be outside and awake without walking far. ~10-min walk from the hotel.</div></div></div>
+        <div class="stop"><div class="time">11:00</div><div><div class="what">Train to <b>Meiji Jingu</b><span class="cost">free · ¥170 train</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Meiji+Jingu" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Meiji_Jingu_2023-3.jpg/1280px-Meiji_Jingu_2023-3.jpg" alt="Meiji Shrine" loading="lazy"><div class="note">JR to Harajuku, ~5 min. A forest of 100,000 donated trees wrapped around the shrine to Emperor Meiji — gravel approach, giant wooden torii, sake-barrel wall. Calm even at midday.</div></div></div>
+        <div class="stop"><div class="time">12:15</div><div>
+          <div class="what">Lunch in Harajuku / Omotesandō<span class="cost">~$8–25 food</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Ura-Harajuku backstreets</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>5-min walk off the main drag</span><span>$10–14</span></div><div class="opt-note">A curry, katsu, or gyoza shop on the quieter lanes behind Takeshita — a seat, AC, and no queue.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Takeshita Street crepes &amp; snacks</span></div><div class="opt-meta"><span>right at Harajuku Station</span><span>$6–10</span></div><div class="opt-note">Grazing lunch — a fruit-and-cream crepe, a cheese hotdog, bubble tea. Loud and packed; fun if you're not jet-lag-fried.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Maisen Tonkatsu, Aoyama</span></div><div class="opt-meta"><span>~8-min walk toward Omotesandō</span><span>$18–25</span></div><div class="opt-note">A tonkatsu institution in a converted bathhouse — the sit-down splurge option if the group wants a proper first meal.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Maisen+Aoyama+Tokyo" target="_blank" rel="noopener">Map ↗</a></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">13:30</div><div>
+          <div class="what">Harajuku + Omotesandō stroll<span class="cost">free browsing–$40</span></div>
+          <img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/JRE-Harajuku-Station-07.jpg/1280px-JRE-Harajuku-Station-07.jpg" alt="Harajuku Station" loading="lazy">
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Omotesandō avenue</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>tree-lined, ~700 m</span><span>free browsing</span></div><div class="opt-note">Architect-designed flagships, the Tokyu Plaza Omotesandō mirrored entrance and rooftop terrace, and quiet cafés — a calmer counterpoint to Takeshita on a tired first day.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Omotesando+Tokyo" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Takeshita Street</span></div><div class="opt-meta"><span>~350 m, pedestrian</span><span>free–$30</span></div><div class="opt-note">Teen-fashion lane — Daiso, purikura booths, gachapon, novelty shops. Peak crowds in the afternoon.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Cat Street → Shibuya</span></div><div class="opt-meta"><span>~1.2 km walk south</span><span>free–$40</span></div><div class="opt-note">A car-free backstreet of vintage and streetwear that spills you out at Shibuya — do this only if the nap can wait.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">15:30</div><div><div class="what">Back to the hotel — <b>official check-in, shower, nap</b></div><div class="note">60–90 minutes. Don't skip it: it's the difference between a functional evening and calling it a night at 18:00.</div></div></div>
+        <div class="stop"><div class="time">18:30</div><div>
+          <div class="what">Dinner in Shinjuku<span class="cost">~$9–35 food</span></div>
+          <img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/G2_Street_20090626_2.jpg/1280px-G2_Street_20090626_2.jpg" alt="Shinjuku alley bars" loading="lazy">
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Omoide Yokochō</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~6-min walk, west side of the station</span><span>$15–25</span></div><div class="opt-note">A lantern-lit warren of 6-seat yakitori counters under the tracks — smoke, beer, grilled skewers. The iconic first Tokyo night, and you can stumble home.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Omoide+Yokocho+Shinjuku" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Tsunahachi, Shinjuku</span></div><div class="opt-meta"><span>~8-min walk, east side</span><span>$18–30</span></div><div class="opt-note">Tempura fried at the counter since 1924 — a calm, seated, air-conditioned alternative to the alley.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Tsunahachi+Shinjuku+Honten" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Ichiran or Fūunji ramen</span></div><div class="opt-meta"><span>both near the south / west exits</span><span>$9–13</span></div><div class="opt-note">Solo-booth tonkotsu at Ichiran, or Fūunji's famous fish-broth tsukemen — fast, cheap, no conversation required.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">20:00</div><div><div class="what"><b>Tokyo Metropolitan Government Building</b> — free observation deck<span class="cost">free</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Tokyo+Metropolitan+Government+Building+Observation" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Tokyo_Metropolitan_Government_Building_2024.jpg/1280px-Tokyo_Metropolitan_Government_Building_2024.jpg" alt="Tokyo Metropolitan Government Building" loading="lazy"><div class="note">45th floor, ~202 m, open until ~22:00 (last entry ~21:30), ~10-min walk from the hotel. A free night skyline — pick out Skytree, and Fuji's silhouette at dusk on a clear evening. The "TOKYO Night &amp; Light" projection show runs on the building's facade in the evening.</div></div></div>
+        <div class="stop"><div class="time">21:00</div><div>
+          <div class="what">Optional nightcap<span class="cost">free–$12</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Golden Gai / Kabukichō walk-through</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~8-min walk, north-east of the station</span><span>free to walk · $8–12 if you sit</span></div><div class="opt-note">Six narrow lanes of tiny themed bars, atmospheric even if you don't drink. Some bars charge a table cover — read the doorway signs, and the tourist-friendly ones say so in English.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Golden+Gai+Shinjuku" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Don Quijote Shinjuku</span></div><div class="opt-meta"><span>~7-min walk, near Kabukichō</span><span>free–$40</span></div><div class="opt-note">A 24-hour maze of snacks, cosmetics, and souvenirs — do a scouting pass now, buy on the way out of town.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Straight back to the hotel</span></div><div class="opt-meta"><span>you've been awake ~24 hours</span><span>free</span></div><div class="opt-note">The entirely reasonable choice. Tomorrow starts early.</div></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="meaning"><b>Why it's worth it:</b> a red-eye wrecks the first day if you fight it. This one is built around the flight — Shinjuku Gyoen and Meiji Jingu ask nothing of you, the mid-afternoon nap is non-negotiable, and everything after dark is inside a 10-minute walk of the bed.</div>
+      <div class="hiccup"><b>Possible hiccups:</b><ul>
+        <li>If the flight lands late or immigration drags, cut Shinjuku Gyoen and go straight to the nap — Meiji Jingu stays open until sunset and works fine in the late afternoon.</li>
+        <li>Early September is still 30&nbsp;°C+ and sticky; the "light layer" is for train and department-store AC, not the street.</li>
+        <li>Shinjuku Gyoen's greenhouse closes 30 min before the park, and alcohol and large sports gear aren't allowed in — it's a quiet garden, not a picnic-party lawn.</li>
+        <li>The Government Building sometimes closes one tower's deck for events; the other tower, or the paid Shibuya Sky on Day 4, are the fallbacks.</li>
+      </ul></div>
+      <div class="nav-btns"><button class="nav-btn" id="prevBtn" disabled></button><button class="nav-btn" id="nextBtn">Next day →</button></div>
+    </div>
+
+    <!-- ===================== DAY 2 ===================== -->
+    <div class="day-panel" data-day="2">
+      <div class="day-head">
+        <div class="day-date">Fri · Sep 11</div>
+        <h1 class="day-title">Old Tokyo: Asakusa, Skytree, Ueno, Akiba <span class="kr">金曜日</span></h1>
+        <div class="weather" data-forecast-date="2026-09-11">
+          <div class="temp" id="temp-2">31° <span>/ 25°C</span></div>
+          <div class="wdesc"><b id="wcond-2">Hot, humid, afternoon showers possible.</b> This is the big walking day — temple grounds, a river crossing, two markets. Cap, sunscreen, water, and the umbrella in the bag.<span class="wsource" id="wsource-2"></span></div>
+        </div>
+        <div class="outfit-photos">
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/17900105/pexels-photo-17900105.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 1 — sun hat and sunscreen" loading="lazy"><span class="outfit-photo-label">Idea 1</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/7836547/pexels-photo-7836547.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 2 — sun hat, sunglasses, light sweater" loading="lazy"><span class="outfit-photo-label">Idea 2</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/3030690/pexels-photo-3030690.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 3 — sun hat, sunglasses, comfortable shoes" loading="lazy"><span class="outfit-photo-label">Idea 3</span></div>
+        </div>
+        <div class="outfit">
+          <span class="chip">moisture-wicking tee</span>
+          <span class="chip">cap / sun hat</span>
+          <span class="chip">sunscreen</span>
+          <span class="chip">umbrella in daypack</span>
+        </div>
+        <div class="day-media">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Sensoji_2023.jpg/1280px-Sensoji_2023.jpg" alt="Sensō-ji" loading="lazy">
+          <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=139.7700%2C35.6960%2C139.8200%2C35.7200&layer=mapnik&marker=35.7148%2C139.7967" loading="lazy" title="Map of today's stops"></iframe>
+          <div class="cap"><span>Asakusa &amp; Sumida</span><span>Today's area</span></div>
+        </div>
+      </div>
+      <div class="stops">
+        <div class="stop"><div class="time">07:30</div><div>
+          <div class="what">Breakfast near the hotel<span class="cost">~$4–12 food</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Station bakery / hotel-area café</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~2–4-min walk</span><span>$6–9</span></div><div class="opt-note">Coffee and a curry-pan or an egg sando standing at the counter — in and out in 15 minutes.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Conbini breakfast on the train</span></div><div class="opt-meta"><span>7-Eleven / Lawson by the hotel</span><span>¥500 · ~$4</span></div><div class="opt-note">Saves 20 minutes and gets you to Kaminarimon before the tour buses.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Matsuya / Yoshinoya gyūdon set</span></div><div class="opt-meta"><span>near the station exits</span><span>¥400–600 · ~$4</span></div><div class="opt-note">A hot beef-and-rice breakfast set with miso soup, ordered from a ticket machine. Fast and cheap.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">08:15</div><div><div class="what">Train to <b>Asakusa</b><span class="cost">~$2 transport</span></div><div class="note">Marunouchi line to Ginza, transfer to the Ginza line for Asakusa — ~35 min. Aim to be at Kaminarimon before 09:00 to beat the tour groups.</div></div></div>
+        <div class="stop"><div class="time">09:00</div><div><div class="what"><b>Sensō-ji</b> — Kaminarimon, Nakamise-dōri, main hall<span class="cost">free</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Senso-ji+Temple" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Day2-2_%2840909714314%29.jpg/1280px-Day2-2_%2840909714314%29.jpg" alt="Kaminarimon gate, Asakusa" loading="lazy"><div class="note">Tokyo's oldest temple, founded 645. Shoot the giant red lantern at Kaminarimon early, walk the 250 m of Nakamise souvenir stalls to the second gate, then the main hall and five-storey pagoda. Free.</div></div></div>
+        <div class="stop"><div class="time">10:15</div><div>
+          <div class="what">One more thing in Asakusa<span class="cost">free–$25</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Asakusa Culture Tourist Center rooftop</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>across from Kaminarimon</span><span>free</span></div><div class="opt-note">Take the lift to the 8th-floor terrace for a free straight-down view of Nakamise and a clean line to Skytree — 10 minutes, no ticket.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Kimono rental + photo hour</span></div><div class="opt-meta"><span>several shops around the temple</span><span>$18–25</span></div><div class="opt-note">Rent for a few hours and walk the temple lanes and Sumida Park in it — most fun on a not-too-humid morning.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Kappabashi Kitchen Street</span></div><div class="opt-meta"><span>~10-min walk west</span><span>free–$40</span></div><div class="opt-note">A whole street of restaurant-supply shops — knives, ceramics, and the plastic food samples that make great souvenirs.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Kappabashi+Kitchen+Town+Tokyo" target="_blank" rel="noopener">Map ↗</a></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">10:45</div><div><div class="what">Walk to <b>Tokyo Skytree</b> via Sumida Park<span class="cost">free</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Tokyo_Skytree_2014_%E2%85%A2.jpg/1280px-Tokyo_Skytree_2014_%E2%85%A2.jpg" alt="Tokyo Skytree" loading="lazy"><div class="note">Cross the Sumida River on the Azumabashi bridge and walk in ~20 minutes, past the Asahi "golden flame" building.</div></div></div>
+        <div class="stop"><div class="time">11:15</div><div>
+          <div class="what">Skytree — pick your version<span class="cost">free–$26</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Tembo Deck, 350 m</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>book a weekday time slot online</span><span>¥2,100–2,700 · ~$14–18</span></div><div class="opt-note">The main deck — fast lifts, 360° glass, a see-through floor panel, and Fuji on the horizon on a clear day. Enough on its own.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Skip the deck — Solamachi + rooftop garden</span></div><div class="opt-meta"><span>base of the tower</span><span>free</span></div><div class="opt-note">The mall under Skytree has a free rooftop garden with a great look-up shot, plus an aquarium, a Pokémon Center, and food floors.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Both decks — add the Tembo Galleria, 450 m</span></div><div class="opt-meta"><span>combo ticket</span><span>¥3,100–3,900 · ~$21–26</span></div><div class="opt-note">A spiralling glass skywalk to the highest point — worth the extra only if the sky is genuinely clear.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">12:30</div><div><div class="what">Lunch at <b>Tokyo Solamachi</b><span class="cost">~$9–18 food</span></div><div class="note">Conveyor sushi, tonkatsu, ramen, or a monjayaki griddle in the mall's restaurant floors — all air-conditioned, all quick.</div></div></div>
+        <div class="stop"><div class="time">14:00</div><div><div class="what">Ginza line to <b>Ueno</b><span class="cost">~$2 transport</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Ueno+Park" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Ueno_park.jpg/1280px-Ueno_park.jpg" alt="Ueno Park" loading="lazy"><div class="note">Asakusa → Ueno on the Ginza line, ~5 min.</div></div></div>
+        <div class="stop"><div class="time">14:20</div><div>
+          <div class="what"><b>Ueno Park</b> — pick one thing inside<span class="cost">free–$7</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Tokyo National Museum</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>north end of the park</span><span>¥1,000 · ~$7</span></div><div class="opt-note">Japan's largest collection — samurai armour, swords, screens, Buddhist sculpture. Ninety minutes on the Honkan highlights is plenty; open later on Fridays.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Tokyo+National+Museum" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Ueno Zoo</span></div><div class="opt-meta"><span>west side of the park</span><span>¥600 · ~$4</span></div><div class="opt-note">Giant pandas, and a monorail-free walk through if energy is flagging and you just want to be outdoors.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Just the park + Shinobazu Pond</span></div><div class="opt-meta"><span>south half of the park</span><span>free</span></div><div class="opt-note">A lotus-covered pond, the Bentendo shrine on its island, street performers, and shaded benches. Free and easy on tired legs.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">16:00</div><div><div class="what"><b>Ameyoko Market</b><span class="cost">free browsing–$30</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Ameyoko+Market+Ueno" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ueno_20241210_133139.jpg/1280px-Ueno_20241210_133139.jpg" alt="Ameyoko Market" loading="lazy"><div class="note">A loud arcade of ~400 stalls under and beside the JR tracks between Ueno and Okachimachi — dried snacks, cheap sneakers, seafood, spices, standing bars. Good for a late-afternoon snack round.</div></div></div>
+        <div class="stop"><div class="time">17:15</div><div><div class="what">To <b>Akihabara</b><span class="cost">~$2 transport</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Akihabara+Electric+Town" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png/1280px-Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png" alt="Akihabara at night" loading="lazy"><div class="note">One stop on the JR from Okachimachi, or an 8-minute walk. Best after dark, when the signage lights up.</div></div></div>
+        <div class="stop"><div class="time">17:30</div><div>
+          <div class="what">Akihabara Electric Town<span class="cost">free browsing–$$$</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Multi-floor arcades + Super Potato</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>Chuo-dori and the side streets</span><span>free to browse</span></div><div class="opt-note">Yodobashi's mega-store, GiGO arcades floor by floor, and Super Potato's retro-game shrine on the upper levels — buy nothing or a suitcase full.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Gachapon Kaikan + Mandarake</span></div><div class="opt-meta"><span>~5-min walk apart</span><span>$3–40</span></div><div class="opt-note">A hall of hundreds of capsule-toy machines, and eight floors of secondhand anime, manga, and collectibles.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">A themed café</span></div><div class="opt-meta"><span>several within a block</span><span>$15–25 with the set</span></div><div class="opt-note">Maid café, anime café, or the retro game-bar type — the drink-and-photo set is the whole point. Skip if it's not your thing.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">19:00</div><div>
+          <div class="what">Dinner<span class="cost">~$9–30 food</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Kanda / Akihabara izakaya</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>under the tracks toward Kanda</span><span>$18–25</span></div><div class="opt-note">Grilled skewers, karaage, and highballs at a counter in the railway arches — the classic Tokyo weeknight.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Kyūshū Jangara ramen, Akihabara</span></div><div class="opt-meta"><span>on Chuo-dori</span><span>$10–13</span></div><div class="opt-note">Rich tonkotsu with all the toppings — fast, seated, reliable.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">CoCo Ichibanya curry</span></div><div class="opt-meta"><span>a branch near the station</span><span>$9–12</span></div><div class="opt-note">Build-your-own Japanese curry — pick the rice size, spice level, and toppings. Quick and quietly excellent.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">20:30</div><div><div class="what">Back to Shinjuku<span class="cost">~$2 transport</span></div><div class="note">JR Chūō line from Ochanomizu / Akihabara direct to Shinjuku, ~15–20 min.</div></div></div>
+      </div>
+      <div class="meaning"><b>Why it's worth it:</b> one straight line through the older, eastern half of the city — Tokyo's oldest temple, its tallest tower, its biggest museum, and two market arcades — all strung together by the Ginza and Yamanote lines with no taxi needed.</div>
+      <div class="hiccup"><b>Possible hiccups:</b><ul>
+        <li>Nakamise is shoulder-to-shoulder by 10:00 — the early start is the whole trick. If you're slow out the door, flip the day: Akihabara doesn't really wake up until 11:00 anyway.</li>
+        <li>Skytree same-day slots can sell out for the next 1–2 hours on a busy day — book online that morning, or take the free Solamachi rooftop instead.</li>
+        <li>September afternoons spawn sudden downpours; Ameyoko and Solamachi are both covered if you need to wait one out.</li>
+        <li>Ueno museums stop entry ~30 min before closing — do the museum before the market, not after.</li>
+      </ul></div>
+      <div class="nav-btns"><button class="nav-btn" id="prevBtn2">← Previous day</button><button class="nav-btn" id="nextBtn2">Next day →</button></div>
+    </div>
+
+    <!-- ===================== DAY 3 ===================== -->
+    <div class="day-panel" data-day="3">
+      <div class="day-head">
+        <div class="day-date">Sat · Sep 12</div>
+        <h1 class="day-title">Day trip: the Hakone loop <span class="kr">土曜日</span></h1>
+        <div class="weather" data-forecast-date="2026-09-12">
+          <div class="temp" id="temp-3">27° <span>/ 20°C</span></div>
+          <div class="wdesc"><b id="wcond-3">Cooler in the mountains, mist likely up high.</b> Hakone sits 700–1,000 m up — 5–8&nbsp;°C below Tokyo and wetter. Bring the layer you've been carrying all trip and the umbrella.<span class="wsource" id="wsource-3"></span></div>
+        </div>
+        <div class="outfit-photos">
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/934070/pexels-photo-934070.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 1 — white sherpa cardigan, jeans" loading="lazy"><span class="outfit-photo-label">Idea 1</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/15667095/pexels-photo-15667095.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 2 — cream knit cardigan, jeans" loading="lazy"><span class="outfit-photo-label">Idea 2</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/8318230/pexels-photo-8318230.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 3 — comfortable trousers, flats" loading="lazy"><span class="outfit-photo-label">Idea 3</span></div>
+        </div>
+        <div class="outfit">
+          <span class="chip">light cardigan / layer</span>
+          <span class="chip">comfortable trousers</span>
+          <span class="chip">walking shoes</span>
+          <span class="chip">umbrella</span>
+        </div>
+        <div class="day-media">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/View_of_Mount_Fuji_from_Lake_Ashi.jpg/1280px-View_of_Mount_Fuji_from_Lake_Ashi.jpg" alt="Mount Fuji from Lake Ashi, Hakone" loading="lazy">
+          <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=138.9900%2C35.1850%2C139.1300%2C35.2600&layer=mapnik&marker=35.2043%2C139.0258" loading="lazy" title="Map of today's stops"></iframe>
+          <div class="cap"><span>Hakone</span><span>Today's area</span></div>
+        </div>
+      </div>
+      <div class="stops">
+        <div class="stop"><div class="time">07:30</div><div><div class="what">Coffee + buy the <b>Hakone Free Pass</b><span class="cost">¥6,100 · ~$41 (2-day)</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Odakyu+Sightseeing+Service+Center+Shinjuku" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Odakyu-Type60000-MSE-Hakone.jpg/1280px-Odakyu-Type60000-MSE-Hakone.jpg" alt="Odakyu Romancecar" loading="lazy"><div class="note">The room's still yours tonight, so no checkout. Grab the pass at the Odakyu Sightseeing Service Center on the ground floor of Shinjuku West — it covers the round-trip fare from Shinjuku plus all 8 modes of Hakone transport for two days.</div></div></div>
+        <div class="stop"><div class="time">08:00</div><div>
+          <div class="what">Odakyu train to <b>Hakone-Yumoto</b><span class="cost">pass + surcharge</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">"Romancecar" limited express</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~85 min, direct, reserved seats</span><span>+¥1,200 · ~$8 surcharge</span></div><div class="opt-note">Book the front observation car if you can — floor-to-ceiling glass over the driver. Reserve both legs this morning; Saturday returns fill up.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Local + rapid, transfer at Odawara</span></div><div class="opt-meta"><span>~105–115 min, one change</span><span>free on the pass</span></div><div class="opt-note">No surcharge, just slower and you stand part of the way on a weekend. Fine on the way home if the Romancecar is booked out.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">09:30</div><div><div class="what"><b>Hakone Tozan Railway</b> — Yumoto → Gōra<span class="cost">included</span></div><div class="note">A 40-minute climb on a switchback mountain line — the train stops and reverses direction three times to gain height. Hydrangea-lined into early summer, forest and gorge the rest of the year.</div></div></div>
+        <div class="stop"><div class="time">10:15</div><div>
+          <div class="what">First stop out of Gōra<span class="cost">free–$13</span></div>
+          <img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Hakone5.jpg/1280px-Hakone5.jpg" alt="Hakone Open-Air Museum" loading="lazy">
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Hakone Open-Air Museum</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>Chōkoku-no-Mori, one stop below Gōra</span><span>¥2,000 · ~$13 (pass discount ¥1,800)</span></div><div class="opt-note">A hillside of Henry Moore and Miró sculpture with the mountains behind them, plus a Picasso pavilion and a warm foot-bath fed by a hot spring. About 90 minutes.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Hakone+Open-Air+Museum" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Hakone Gōra Park</span></div><div class="opt-meta"><span>right by Gōra Station</span><span>¥550 · ~$4</span></div><div class="opt-note">A small French-style hillside garden with a greenhouse and craft workshops — quicker, and it's on the pass route.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Straight to the cable car</span></div><div class="opt-meta"><span>skip both stops</span><span>free</span></div><div class="opt-note">Save the 90 minutes for a longer, slower afternoon on the lake.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">12:00</div><div><div class="what">Lunch in Gōra<span class="cost">~$10–20 food</span></div><div class="note">Hand-cut soba, a curry-pan bakery, or Gōra Brewery &amp; Grill — or carry a bento onto the ropeway for a moving lunch.</div></div></div>
+        <div class="stop"><div class="time">12:45</div><div><div class="what"><b>Sōunzan funicular → Hakone Ropeway</b> over Ōwakudani<span class="cost">included</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Owakudani" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/1280px-Owakudani_-_Hakone_%2827369344357%29.jpg" alt="Ōwakudani" loading="lazy"><div class="note">A gondola line that floats over a live volcanic valley — sulphur vents steaming below, and Fuji straight ahead on a clear day. Get off at Ōwakudani for the <b>kuro-tamago</b>, black eggs boiled in the hot springs — ¥500 for five, said to add seven years to your life.</div></div></div>
+        <div class="stop"><div class="time">14:15</div><div><div class="what">Ropeway to Tōgendai → <b>Lake Ashi cruise</b><span class="cost">included</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Lake+Ashi+Hakone" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/260505_Moto-Hakone_Hakone_Japan01s3.jpg/1280px-260505_Moto-Hakone_Hakone_Japan01s3.jpg" alt="Lake Ashi" loading="lazy"><div class="note">The mock-galleon "pirate ship" sightseeing boat across the lake to Moto-Hakone, ~30 minutes, Fuji off the bow when the cloud lifts.</div></div></div>
+        <div class="stop"><div class="time">15:00</div><div><div class="what"><b>Hakone Shrine</b> — the torii in the water<span class="cost">free</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Hakone+Shrine" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Hakonejinja_-01.jpg/1280px-Hakonejinja_-01.jpg" alt="Hakone Shrine torii" loading="lazy"><div class="note">The red Torii of Peace stands in the lake just south of Moto-Hakone pier. Expect a 30–60 min queue for the exact photo on a Saturday; the cedar-lined path and the shrine grounds uphill are free and quiet.</div></div></div>
+        <div class="stop"><div class="time">16:15</div><div>
+          <div class="what">Optional onsen on the way down<span class="cost">free–$25</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Hakone Yuryō</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>free shuttle from Hakone-Yumoto</span><span>~¥3,500 · ~$25 for a private bath</span></div><div class="opt-note">Wooded grounds near Yumoto with reservable private open-air baths — the workaround if anyone has tattoos or would rather not go communal.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Tenzan Tōji-kyō</span></div><div class="opt-meta"><span>near Hakone-Yumoto</span><span>¥1,450 · ~$10</span></div><div class="opt-note">A locals' favourite with several rock pools of varying heat — communal only, tattoos restricted.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Skip it</span></div><div class="opt-meta"><span>if the loop ran long</span><span>free</span></div><div class="opt-note">Head straight for the Romancecar and be back in Shinjuku for a proper dinner.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">17:30</div><div><div class="what">Bus / train to Hakone-Yumoto, then <b>Romancecar back to Shinjuku</b><span class="cost">pass + ~$8 surcharge</span></div><div class="note">A few minutes on the Yumoto shop street for a hot-spring manjū, then the reserved train home. Arrive Shinjuku ~19:30–20:00.</div></div></div>
+        <div class="stop"><div class="time">20:15</div><div><div class="what">Late dinner near the hotel<span class="cost">~$9–25 food</span></div><div class="note">A Shinjuku izakaya, sushi on Southern Terrace, or a fast bowl of ramen — you've earned an early night before the last day.</div></div></div>
+      </div>
+      <div class="meaning"><b>Why it's worth it:</b> the Hakone Free Pass turns an eight-transfer mountain circuit into a single ticket — mountain railway, funicular, volcanic ropeway, and a lake cruise — with Fuji views, an open-air sculpture museum, and an onsen all threaded onto the loop, and you're back in Shinjuku by dinner.</div>
+      <div class="hiccup"><b>Possible hiccups:</b><ul>
+        <li>Mid-September is still typhoon season. In heavy rain or wind the ropeway and the pirate ship both suspend — but the mountain railway, the Open-Air Museum, and the Yumoto onsen all keep running, so the day still holds up. Reverse the loop and use the replacement buses.</li>
+        <li>The Hakone Shrine torii queue is brutal on a Saturday — take the photo from the side, or do the shrine early and the museum later.</li>
+        <li>The Romancecar surcharge is <em>not</em> in the Free Pass — reserve both legs at Shinjuku in the morning, the return especially.</li>
+        <li>Ōwakudani closes to foot traffic when volcanic gas levels rise; the ropeway then runs through without stopping, which is fine — just no black eggs that day.</li>
+      </ul></div>
+      <div class="nav-btns"><button class="nav-btn" id="prevBtn3">← Previous day</button><button class="nav-btn" id="nextBtn3">Next day →</button></div>
+    </div>
+
+    <!-- ===================== DAY 4 ===================== -->
+    <div class="day-panel" data-day="4">
+      <div class="day-head">
+        <div class="day-date">Sun · Sep 13</div>
+        <h1 class="day-title">Shibuya, teamLab &amp; the late flight out <span class="kr">日曜日</span></h1>
+        <div class="weather" data-forecast-date="2026-09-13">
+          <div class="temp" id="temp-4">31° <span>/ 25°C</span></div>
+          <div class="wdesc"><b id="wcond-4">Hot and bright, an isolated evening shower.</b> Last day — luggage checked out and held at the hotel, an afternoon of Tokyo highlights, then a straightforward late-night run to Haneda for the 01:00 flight.<span class="wsource" id="wsource-4"></span></div>
+        </div>
+        <div class="outfit-photos">
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/9327156/pexels-photo-9327156.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 1 — flat loafers, structured crossbody bag" loading="lazy"><span class="outfit-photo-label">Idea 1</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/34976478/pexels-photo-34976478.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 2 — flats and crossbody bag" loading="lazy"><span class="outfit-photo-label">Idea 2</span></div>
+          <div class="outfit-photo-item"><img class="outfit-photo" src="https://images.pexels.com/photos/4271569/pexels-photo-4271569.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outfit idea 3 — pleated skirt, sneakers" loading="lazy"><span class="outfit-photo-label">Idea 3</span></div>
+        </div>
+        <div class="outfit">
+          <span class="chip">comfortable travel outfit</span>
+          <span class="chip">layer for the plane</span>
+          <span class="chip">easy slip-on shoes</span>
+          <span class="chip">umbrella</span>
+        </div>
+        <div class="day-media">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Shibuya_Crossing%2C_Aerial.jpg/1280px-Shibuya_Crossing%2C_Aerial.jpg" alt="Shibuya Crossing" loading="lazy">
+          <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=139.6900%2C35.6500%2C139.7150%2C35.6660&layer=mapnik&marker=35.6595%2C139.7005" loading="lazy" title="Map of today's stops"></iframe>
+          <div class="cap"><span>Shibuya</span><span>Today's area</span></div>
+        </div>
+      </div>
+      <div class="stops">
+        <div class="stop"><div class="time">09:00</div><div><div class="what"><b>Checkout</b> — bags held at the hotel</div><div class="note">The flight is at 01:00, so your bags travel with you today. The front desk holds luggage until the evening — you'll swing back for it before Haneda, no separate storage needed.</div></div></div>
+        <div class="stop"><div class="time">09:30</div><div><div class="what">Breakfast near the hotel / Southern Terrace<span class="cost">~$5–12 food</span></div><div class="note">A last relaxed café hour before the trains fill up.</div></div></div>
+        <div class="stop"><div class="time">10:15</div><div><div class="what">JR Yamanote to <b>Shibuya</b><span class="cost">~$2 transport</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Shibuya+Scramble+Crossing" target="_blank" rel="noopener">Map ↗</a></div><div class="note">Three minutes from Shinjuku.</div></div></div>
+        <div class="stop"><div class="time">10:30</div><div><div class="what"><b>Shibuya Scramble Crossing</b> + Hachikō statue<span class="cost">free</span></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Shibuya_Crossing%2C_Aerial.jpg/1280px-Shibuya_Crossing%2C_Aerial.jpg" alt="Shibuya Crossing" loading="lazy"><div class="note">Cross it once in the scrum, then watch from above — the 2F window at Shibuya Tsutaya, or the free Mag's Park rooftop over Shibuya 109.</div></div></div>
+        <div class="stop"><div class="time">11:00</div><div>
+          <div class="what">One elevated view<span class="cost">free–$19</span></div>
+          <img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/SHIBUYA_SCRAMBLE_SQUARE_East_Tower.jpg/1280px-SHIBUYA_SCRAMBLE_SQUARE_East_Tower.jpg" alt="Shibuya Scramble Square" loading="lazy">
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Shibuya Sky</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>Scramble Square rooftop, ~229 m</span><span>¥2,500–2,900 · ~$17–19</span></div><div class="opt-note">An open-air rooftop deck looking straight down the crossing, with Fuji to the west on a clear day. Book a daytime slot — you can't do the sunset one tonight.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Shibuya+Sky" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Miyashita Park rooftint deck</span></div><div class="opt-meta"><span>5-min walk toward Harajuku</span><span>free</span></div><div class="opt-note">A long rooftop park over a shopping street — lawn, skate bowl, cafés, and a lower but pleasant city view, no ticket.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Shibuya Hikarie, 11F Sky Lobby</span></div><div class="opt-meta"><span>connected to the station</span><span>free</span></div><div class="opt-note">An indoor window east toward Skytree — a quick, free, air-conditioned look if the queues elsewhere are long.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">12:15</div><div>
+          <div class="what">Lunch in Shibuya<span class="cost">~$9–20 food</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Uobei conveyor sushi</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>Dōgenzaka, ~5-min walk</span><span>$10–14</span></div><div class="opt-note">Tablet-order plates that shoot to your seat on a rail — fast, cheap, genuinely good, and a fun last lunch.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Shibuya Yokochō food hall</span></div><div class="opt-meta"><span>inside Miyashita Park</span><span>$12–18</span></div><div class="opt-note">Regional stalls under one roof — Okinawa, Kyūshū, Hokkaidō small plates and drinks.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Katsu Midori sushi, Seibu</span></div><div class="opt-meta"><span>top of the Seibu department store</span><span>$14–20</span></div><div class="opt-note">A cut above conveyor sushi for a small premium — expect a short wait at peak.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">13:30</div><div>
+          <div class="what">Main afternoon block<span class="cost">free–$25</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">teamLab Planets, Toyosu</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~30 min from Shibuya · pre-booked slot</span><span>¥3,800 · ~$25</span></div><div class="opt-note">Barefoot, wade-through digital-art rooms — a water hall of projected koi, an infinite mirror of lights, a sphere garden. Open late (last entry ~21:00), so it doubles as the pre-airport activity if you'd rather go later.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=teamLab+Planets+Toyosu" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Shimokitazawa</span></div><div class="opt-meta"><span>one stop from Shibuya</span><span>free–$40</span></div><div class="opt-note">Low-slung streets of secondhand shops, record stores, and tiny cafés — the un-skyscraper side of Tokyo, easy on a last afternoon.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Odaiba</span></div><div class="opt-meta"><span>Yurikamome over the Rainbow Bridge</span><span>free–$20</span></div><div class="opt-note">A driverless-train ride across the bay to the waterfront — life-size Gundam, a giant Ferris wheel, and the bridge lit up at dusk.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Harajuku + Meiji Jingu redo</span></div><div class="opt-meta"><span>2 stops back toward Shinjuku</span><span>free–$40</span></div><div class="opt-note">If Day 1's version got cut short by the nap, this is the make-up slot.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">16:30</div><div>
+          <div class="what">Souvenirs &amp; last-minute shopping<span class="cost">free browsing–$$$</span></div>
+          <img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Ginza-WAKO_at_night.jpg/1280px-Ginza-WAKO_at_night.jpg" alt="Ginza" loading="lazy">
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Shibuya — Loft, Hands, Don Quijote</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>all within the station block</span><span>free–$$$</span></div><div class="opt-note">Stationery and homeware at Loft and Hands, everything-else at Mega Don Quijote, fashion at Shibuya 109 — the efficient one-stop for gifts without changing trains.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Ginza</span></div><div class="opt-meta"><span>~10 min by Ginza line</span><span>free–$$$</span></div><div class="opt-note">Uniqlo and GU flagships, Itōya's nine floors of stationery, and the Mitsukoshi <em>depachika</em> food hall in the basement — the best edible souvenirs in the city.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Ginza+Tokyo" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Nakameguro / Daikanyama</span></div><div class="opt-meta"><span>~7 min by Tōkyū line</span><span>free–$$$</span></div><div class="opt-note">Canal-side design shops and the Daikanyama T-Site bookstore — calmer, more curated, good if you're gifted-out on chain stores.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">18:30</div><div>
+          <div class="what">Early farewell dinner<span class="cost">~$10–30 food</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Shibuya izakaya or tonkatsu</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>back streets off Center-gai</span><span>$20–28</span></div><div class="opt-note">A proper last sit-down meal — a tonkatsu set, or a table of small plates and a toast to the trip.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Depachika farewell spread</span></div><div class="opt-meta"><span>Tōkyū Food Show, under the station</span><span>$15–20</span></div><div class="opt-note">Assemble a spread from the basement food hall — wagyu croquettes, sushi boxes, wagashi — and eat now or carry it to the airport.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Ichiran or AFURI ramen</span></div><div class="opt-meta"><span>both near Shibuya Station</span><span>$10–13</span></div><div class="opt-note">One last bowl — Ichiran's tonkotsu booths or AFURI's clear yuzu-shio. Fast, and you're on your way.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">20:00</div><div><div class="what">Back to the hotel for <b>luggage</b></div><div class="note">Collect the bags from the front desk, freshen up, repack the carry-on for the overnight flight.</div></div></div>
+        <div class="stop"><div class="time">20:45</div><div>
+          <div class="what">Head to <b>Haneda Airport</b><span class="cost">~$5–13 transport</span></div>
+          <div class="opt-grid">
+            <div class="opt-card pick"><div class="opt-top"><span class="opt-name">Airport Limousine Bus from Busta Shinjuku</span><span class="opt-tag">Pick</span></div><div class="opt-meta"><span>~45–60 min · luggage in the hold</span><span>¥1,400 · ~$9</span></div><div class="opt-note">One seat straight to Terminal 3 with the bags stowed. Last departures are around 22:00–22:30 — the reason dinner is early.</div><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Busta+Shinjuku" target="_blank" rel="noopener">Map ↗</a></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">JR to Shinagawa → Keikyū to Haneda</span></div><div class="opt-meta"><span>~45 min, one transfer</span><span>¥660 · ~$4.50</span></div><div class="opt-note">Runs later than the buses (until ~23:30) — the fallback if shopping or dinner overran.</div></div>
+            <div class="opt-card"><div class="opt-top"><span class="opt-name">Taxi, direct</span></div><div class="opt-meta"><span>~40–55 min at that hour</span><span>¥8,000–10,000 · ~$55–70</span></div><div class="opt-note">Only once the trains and buses have stopped — or split 3–4 ways with all the luggage.</div></div>
+          </div>
+        </div></div>
+        <div class="stop"><div class="time">22:00</div><div><div class="what"><b>Haneda Terminal 3</b> — check-in, security, immigration<span class="cost">PH travel tax if unpaid</span><a class="pin" href="https://www.google.com/maps/search/?api=1&query=Haneda+Airport+Terminal+3" target="_blank" rel="noopener">Map ↗</a></div><img class="stop-thumb" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/1280px-All_haneda.jpg" alt="Haneda Airport" loading="lazy"><div class="note">Check-in usually opens 3 hours before departure. Terminal 3 has 24-hour dining, a convenience store, and an airside observation deck if you're early.</div></div></div>
+        <div class="stop"><div class="time">01:00</div><div><div class="what">Depart — <b>PR 422 to Manila</b></div><div class="note">Lands NAIA Terminal 1 at ~05:05. Trip complete.</div></div></div>
+      </div>
+      <div class="meaning"><b>Why it's worth it:</b> a compact final day — the crossing, one skyline deck, teamLab, and a souvenir run — all hung off one or two Yamanote stops, with the hotel holding the bags until a single bus straight to Haneda for the 1&nbsp;a.m. flight.</div>
+      <div class="hiccup"><b>Possible hiccups:</b><ul>
+        <li>The last Airport Limousine buses from Shinjuku leave around 22:00–22:30 — if the day runs long, switch to the Shinagawa → Keikyū train, which runs later.</li>
+        <li>teamLab Planets and Shibuya Sky are both timed-entry and routinely sell out days ahead — book both the moment the plan is set, or fall back to the free views.</li>
+        <li>Sunday-evening trains toward Shinagawa are busy; add 15 minutes with luggage.</li>
+        <li>A 01:00 departure means Haneda's shops and some restaurants are shut and check-in is quiet — eat before you leave the city, or rely on Terminal 3's 24-hour options.</li>
+      </ul></div>
+      <div class="nav-btns"><button class="nav-btn" id="prevBtn4">← Previous day</button><button class="nav-btn" id="nextBtn4">Budget →</button></div>
+    </div>
+
+    <!-- ===================== BUDGET ===================== -->
+    <div class="day-panel" data-day="budget">
+      <div class="day-head">
+        <div class="day-date">Trip cost</div>
+        <h1 class="day-title">Budget worksheet</h1>
+      </div>
+      <p style="color:var(--text-dim); font-size:15px; margin:10px 0 20px; line-height:1.6;">Every figure is editable — change any amount and the totals, chart, and per-day numbers update instantly. Line items are in USD for easy comparison; the PHP total uses the rate you set.</p>
+
+      <div class="meaning" style="margin-bottom:20px;"><b>Reconciling with the day-by-day view:</b> the small cost tags on each day's stops are per-person, out-of-pocket estimates for that specific train ride or meal. Breakfasts run ~$5–10 and lunches ~$10–18 — comfortably inside the $15/meal per diem. Izakaya and tonkatsu dinners run a little above a per-diem meal but stay well under a splurge, so they aren't line-itemed separately. The Hakone day's transport is a single pre-paid Free Pass, so it sits under <b>Attractions &amp; passes</b>, not the daily Suica spend under Transport.</div>
+
+      <div class="ctrl-row">
+        <div class="ctrl">
+          <label for="travelers">Travelers</label>
+          <input type="number" id="travelers" value="2" min="1" step="1">
+        </div>
+        <div class="ctrl">
+          <label for="days">Trip length (days)</label>
+          <input type="number" id="days" value="4" min="1" step="1">
+        </div>
+        <div class="ctrl">
+          <label for="fxrate">USD → PHP rate</label>
+          <input type="number" id="fxrate" value="58" min="1" step="0.5">
+        </div>
+      </div>
+
+      <div class="budget-stats">
+        <div class="bstat"><div class="num mono" id="statTotal">$0</div><div class="lbl">total (per person)</div></div>
+        <div class="bstat"><div class="num mono" id="statTotalPhp">₱0</div><div class="lbl">total in PHP</div></div>
+        <div class="bstat"><div class="num mono" id="statGroup">$0</div><div class="lbl">total, all travelers</div></div>
+        <div class="bstat"><div class="num mono" id="statPerDay">$0</div><div class="lbl">avg. per day</div></div>
+      </div>
+
+      <div class="budget-grid">
+
+        <div class="bcard">
+          <h3>Line items — per person</h3>
+
+          <div class="cat">
+            <div class="cat-head"><span class="name">Attractions &amp; passes</span><span class="sub" id="subReg">$0</span></div>
+            <div class="brow">
+              <div class="label">Hakone Free Pass <small>2-day, all transport</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="reg" value="41" step="1"></div>
+            </div>
+            <div class="brow">
+              <div class="label">Shibuya Sky + teamLab Planets</div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="reg" value="44" step="1"></div>
+            </div>
+            <div class="brow">
+              <div class="label">Skytree, museums &amp; misc admissions</div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="reg" value="35" step="1"></div>
+            </div>
+          </div>
+
+          <div class="cat">
+            <div class="cat-head"><span class="name">Meals</span><span class="sub" id="subMeals">$0</span></div>
+            <div class="brow">
+              <div class="label">Per diem <small>$15 / meal × 3 × 4 days</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="meals" value="180" step="1"></div>
+            </div>
+          </div>
+
+          <div class="cat">
+            <div class="cat-head"><span class="name">Accommodation</span><span class="sub" id="subAccom">$0</span></div>
+            <div class="brow">
+              <div class="label">Shinjuku hotel <small>twin rate ÷ 2 × 3 nights</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="accom" value="240" step="1"></div>
+            </div>
+          </div>
+
+          <div class="cat">
+            <div class="cat-head"><span class="name">Insurance</span><span class="sub" id="subIns">$0</span></div>
+            <div class="brow">
+              <div class="label">Travel insurance</div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="ins" value="30" step="1"></div>
+            </div>
+          </div>
+
+          <div class="cat">
+            <div class="cat-head"><span class="name">Transportation</span><span class="sub" id="subTranspo">$0</span></div>
+            <div class="brow">
+              <div class="label">Round-trip airfare <small>MNL ⇄ HND</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="transpo" value="330" step="1"></div>
+            </div>
+            <div class="brow">
+              <div class="label">PH travel tax + terminal fee</div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="transpo" value="35" step="1"></div>
+            </div>
+            <div class="brow">
+              <div class="label">Suica / in-city trains <small>4 days</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="transpo" value="45" step="1"></div>
+            </div>
+            <div class="brow">
+              <div class="label">Airport ⇄ Shinjuku transfers <small>bus × 2</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="transpo" value="18" step="1"></div>
+            </div>
+          </div>
+
+          <div class="cat">
+            <div class="cat-head"><span class="name">Connectivity</span><span class="sub" id="subComm">$0</span></div>
+            <div class="brow">
+              <div class="label">eSIM / pocket wifi <small>~6 days</small></div>
+              <div class="amount"><span class="cur">$</span><input type="number" class="item" data-cat="comm" value="15" step="1"></div>
+            </div>
+          </div>
+
+          <div class="btotal-line">
+            <span class="t-label">Total per person</span>
+            <span class="t-amount mono" id="grandTotal">$0</span>
+          </div>
+        </div>
+
+        <div class="bcard">
+          <h3>Where it goes</h3>
+          <div class="chart-wrap"><canvas id="budgetChart"></canvas></div>
+          <div class="legend" id="legend"></div>
+          <div class="meaning" style="margin-top:14px;"><b>Heads up:</b> the Hakone Free Pass ($41) and the two timed-entry decks — teamLab Planets and Shibuya Sky, ~$44 together — are the biggest discretionary items; dropping either one takes a visible bite out of the per-person total. The $45 Suica budget assumes trains, not taxis — add ~$30–40 if you'll be taxiing after the last trains on the airport night, or splitting late-night rides in Hakone.</div>
+        </div>
+
+      </div>
+
+      <div class="nav-btns"><button class="nav-btn" id="prevBtnBudget">← Previous day</button><button class="nav-btn" disabled></button></div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="tag-line">Overall: early-September Tokyo is Manila-humid, not autumn-crisp yet — breathable cotton and linen, a packable umbrella, and sunscreen cover the city days. Carry one light layer the whole trip: it's for train and department-store AC, and for the 8&nbsp;°C drop up in Hakone. Sneakers over sandals — the city days run 15,000+ steps.</div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <button class="nav-btn" id="resetChoices">Reset my choices</button>
+      <div class="stamp">TOKYO · SEP 2026</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const sequence = ['1','2','3','4','budget'];
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.day-panel');
+
+  function showDay(id){
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.day === String(id)));
+    panels.forEach(p => p.classList.toggle('active', p.dataset.day === String(id)));
+    document.querySelector('.tabbar .tab.active')?.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+    window.scrollTo({top: document.querySelector('.tabbar').offsetTop - 20, behavior:'smooth'});
+  }
+
+  tabs.forEach(t => {
+    t.addEventListener('click', () => showDay(t.dataset.day));
+  });
+
+  const navIds = ['', '2', '3', '4', 'Budget'];
+  sequence.forEach((id, idx) => {
+    const suffix = navIds[idx];
+    const prev = document.getElementById('prevBtn' + suffix);
+    const next = document.getElementById('nextBtn' + suffix);
+    if(prev){
+      if(idx === 0){ prev.disabled = true; prev.textContent = ''; }
+      else prev.addEventListener('click', () => showDay(sequence[idx - 1]));
+    }
+    if(next){
+      if(idx === sequence.length - 1){ next.disabled = true; next.textContent = ''; }
+      else next.addEventListener('click', () => showDay(sequence[idx + 1]));
+    }
+  });
+
+  /* ===== Budget calculator ===== */
+  const fmt = n => '$' + Number(n).toLocaleString('en-US', {maximumFractionDigits:0});
+  const fmtPhp = n => '₱' + Number(n).toLocaleString('en-US', {maximumFractionDigits:0});
+
+  const catMeta = {
+    reg:     { label:'Attractions',   color:'#6B4E71' },
+    meals:   { label:'Meals',         color:'#E0A458' },
+    accom:   { label:'Stay',          color:'#D08C86' },
+    ins:     { label:'Insurance',     color:'#C0362C' },
+    transpo: { label:'Transport',     color:'#3E7CB1' },
+    comm:    { label:'Connectivity',  color:'#5B8C6E' }
+  };
+
+  const chartCanvas = document.getElementById('budgetChart');
+  let chart = null;
+  try {
+    if (typeof Chart === 'undefined') throw new Error('Chart.js did not load');
+    chart = new Chart(chartCanvas.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.values(catMeta).map(c => c.label),
+        datasets: [{
+          data: [0,0,0,0,0,0],
+          backgroundColor: Object.values(catMeta).map(c => c.color),
+          borderColor: '#FBF7F3',
+          borderWidth: 3
+        }]
+      },
+      options: {
+        cutout: '68%',
+        plugins: { legend: { display: false }, tooltip: { enabled: true } }
+      }
+    });
+  } catch (e) {
+    chartCanvas.style.display = 'none';
+    const fallback = document.createElement('p');
+    fallback.style.cssText = 'font-size:13.5px; color:var(--text-dim);';
+    fallback.textContent = 'Chart could not load (no internet connection to the chart library) — figures below are still accurate.';
+    chartCanvas.parentElement.insertBefore(fallback, chartCanvas);
+  }
+
+  function recalcBudget(){
+    const travelers = parseFloat(document.getElementById('travelers').value) || 1;
+    const days = parseFloat(document.getElementById('days').value) || 1;
+    const fx = parseFloat(document.getElementById('fxrate').value) || 58;
+
+    const totals = { reg:0, meals:0, accom:0, ins:0, transpo:0, comm:0 };
+    document.querySelectorAll('.item').forEach(inp => {
+      const cat = inp.dataset.cat;
+      totals[cat] += parseFloat(inp.value) || 0;
+    });
+
+    document.getElementById('subReg').textContent = fmt(totals.reg);
+    document.getElementById('subMeals').textContent = fmt(totals.meals);
+    document.getElementById('subAccom').textContent = fmt(totals.accom);
+    document.getElementById('subIns').textContent = fmt(totals.ins);
+    document.getElementById('subTranspo').textContent = fmt(totals.transpo);
+    document.getElementById('subComm').textContent = fmt(totals.comm);
+
+    const grand = Object.values(totals).reduce((a,b) => a+b, 0);
+    document.getElementById('grandTotal').textContent = fmt(grand);
+    document.getElementById('statTotal').textContent = fmt(grand);
+    document.getElementById('statTotalPhp').textContent = fmtPhp(grand * fx);
+    document.getElementById('statGroup').textContent = fmt(grand * travelers);
+    document.getElementById('statPerDay').textContent = fmt(grand / days);
+
+    if (chart) {
+      chart.data.datasets[0].data = Object.keys(catMeta).map(k => totals[k]);
+      chart.update();
+    }
+
+    const legend = document.getElementById('legend');
+    legend.innerHTML = '';
+    Object.keys(catMeta).forEach(k => {
+      const pct = grand > 0 ? Math.round((totals[k]/grand)*100) : 0;
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="left"><span class="dot" style="background:${catMeta[k].color}"></span>${catMeta[k].label}</div><span class="pct mono">${fmt(totals[k])} · ${pct}%</span>`;
+      legend.appendChild(item);
+    });
+  }
+
+  document.querySelectorAll('.item, #travelers, #days, #fxrate').forEach(el => {
+    el.addEventListener('input', recalcBudget);
+  });
+
+  recalcBudget();
+
+  /* ===== Dynamic option picking ===== */
+  (function(){
+    const STORAGE_KEY = 'tokyoItineraryChoices_v1';
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { saved = {}; }
+
+    const grids = Array.from(document.querySelectorAll('.opt-grid'));
+
+    function selectCard(grid, card, persist){
+      grid.querySelectorAll('.opt-card').forEach(c => {
+        c.classList.remove('pick');
+        const existingTag = c.querySelector('.opt-tag');
+        if (existingTag) existingTag.remove();
+      });
+      card.classList.add('pick');
+      const top = card.querySelector('.opt-top');
+      const tag = document.createElement('span');
+      tag.className = 'opt-tag';
+      tag.textContent = card.dataset.original === 'true' ? 'Pick' : 'Your pick';
+      top.appendChild(tag);
+      if (persist) {
+        const gi = grids.indexOf(grid);
+        const ci = Array.from(grid.children).indexOf(card);
+        saved[gi] = ci;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch(e) {}
+      }
+    }
+
+    grids.forEach((grid, gi) => {
+      Array.from(grid.children).forEach(card => {
+        if (card.classList.contains('pick')) card.dataset.original = 'true';
+        card.addEventListener('click', () => selectCard(grid, card, true));
+      });
+      if (saved[gi] !== undefined && grid.children[saved[gi]]) {
+        selectCard(grid, grid.children[saved[gi]], false);
+      }
+    });
+
+    const resetBtn = document.getElementById('resetChoices');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        location.reload();
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ===== Live weather (Open-Meteo, no API key) ===== */
+  (function() {
+    const TOKYO_LAT = 35.6896;   // Shinjuku, where the hotel is
+    const TOKYO_LON = 139.7006;
+    const DAY_IDS = ['1', '2', '3', '4'];
+
+    const WMO_PHRASE = {
+      0: 'clear skies', 1: 'mostly clear', 2: 'partly cloudy', 3: 'overcast',
+      45: 'foggy', 48: 'foggy',
+      51: 'light drizzle', 53: 'drizzle', 55: 'heavy drizzle',
+      61: 'light rain', 63: 'rain', 65: 'heavy rain',
+      66: 'freezing rain', 67: 'freezing rain',
+      71: 'light snow', 73: 'snow', 75: 'heavy snow', 77: 'snow grains',
+      80: 'rain showers', 81: 'rain showers', 82: 'heavy rain showers',
+      85: 'snow showers', 86: 'snow showers',
+      95: 'thunderstorms', 96: 'thunderstorms with hail', 99: 'thunderstorms with hail'
+    };
+
+    function tempAdjective(maxC) {
+      if (maxC >= 31) return 'Hot';
+      if (maxC >= 27) return 'Warm';
+      if (maxC >= 22) return 'Mild';
+      return 'Cool';
+    }
+
+    function updateForecastNote(html) {
+      const el = document.getElementById('forecastNoteLive');
+      if (el) el.innerHTML = html;
+    }
+
+    async function loadForecast() {
+      const panels = Array.from(document.querySelectorAll('.weather[data-forecast-date]'));
+      if (!panels.length) return;
+
+      const dates = panels.map(p => p.dataset.forecastDate).sort();
+      const startDate = dates[0];
+      const endDate = dates[dates.length - 1];
+
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${TOKYO_LAT}&longitude=${TOKYO_LON}` +
+        `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+        `&timezone=Asia%2FTokyo&start_date=${startDate}&end_date=${endDate}`;
+
+      let data;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('forecast request failed: ' + res.status);
+        data = await res.json();
+        if (!data.daily || !Array.isArray(data.daily.time)) throw new Error('unexpected forecast shape');
+      } catch (err) {
+        updateForecastNote('Live forecast is unavailable right now (offline, or these dates fall outside Open-Meteo\'s ~16-day window) — showing seasonal averages instead.');
+        return;
+      }
+
+      const byDate = {};
+      data.daily.time.forEach((date, i) => {
+        byDate[date] = {
+          max: data.daily.temperature_2m_max[i],
+          min: data.daily.temperature_2m_min[i],
+          code: data.daily.weathercode[i],
+          rain: data.daily.precipitation_probability_max[i]
+        };
+      });
+
+      let anyLive = false;
+      panels.forEach(panel => {
+        const date = panel.dataset.forecastDate;
+        const day = byDate[date];
+        if (!day || day.max == null) return; // leave the seasonal-average fallback untouched
+        anyLive = true;
+
+        const idx = panel.querySelector('[id^="temp-"]')?.id.split('-')[1];
+        if (!idx) return;
+
+        const tempEl = document.getElementById('temp-' + idx);
+        const wcondEl = document.getElementById('wcond-' + idx);
+        const sourceEl = document.getElementById('wsource-' + idx);
+
+        if (tempEl) {
+          tempEl.innerHTML = `${Math.round(day.max)}° <span>/ ${Math.round(day.min)}°C</span>`;
+        }
+        if (wcondEl) {
+          const adj = tempAdjective(day.max);
+          const phrase = WMO_PHRASE[day.code] || 'mixed conditions';
+          const rain = day.rain != null ? Math.round(day.rain) : null;
+          wcondEl.textContent = rain != null
+            ? `${adj}, ${phrase}, ~${rain}% rain chance.`
+            : `${adj}, ${phrase}.`;
+        }
+        if (sourceEl) {
+          sourceEl.textContent = date === '2026-09-12'
+            ? 'Live forecast · Tokyo (Hakone runs cooler and wetter)'
+            : 'Live forecast · Tokyo, Japan';
+        }
+      });
+
+      if (anyLive) {
+        updateForecastNote('Days with a live forecast available show real numbers pulled just now for Tokyo — everything else still shows the seasonal average. Re-open this page closer to departure for full coverage.');
+      } else {
+        updateForecastNote('These dates fall outside the live ~16-day forecast window right now — showing seasonal averages instead. Check back closer to departure.');
+      }
+    }
+
+    loadForecast().catch(() => {});
+  })();
+</script>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+<script>
+  /* ===== Click-to-zoom outfit photos ===== */
+  (function() {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const closeBtn = document.getElementById('lightboxClose');
+
+    function hiRes(src) {
+      return src.replace(/([?&])w=\d+/, '$1w=1200');
+    }
+
+    function openLightbox(img) {
+      lightboxImg.src = hiRes(img.src);
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('open');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+    }
+
+    document.querySelectorAll('.outfit-photo').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img));
+    });
+
+    lightbox.addEventListener('click', closeLightbox);
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+    lightboxImg.addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  })();
+</script>
+</body>
+</html>
