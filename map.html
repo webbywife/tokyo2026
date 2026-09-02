@@ -21,6 +21,7 @@
     --d2:#A8641C;
     --d3:#2E7D4F;
     --d4:#6B4FB0;
+    --dr:#6E6A66;
   }
   *{box-sizing:border-box;}
   html,body{height:100%;}
@@ -209,8 +210,8 @@
 
 <header>
   <a class="back-link" href="itinerary.html">← Back to itinerary</a>
-  <div class="eyebrow">Tokyo 2026 · full trip map</div>
-  <h1>Every stop, <span>one map</span></h1>
+  <div class="eyebrow">Tokyo 2026 · day-trips map</div>
+  <h1>Four trips, <span>one map</span></h1>
   <div class="filters" id="filters"></div>
 </header>
 
@@ -218,73 +219,77 @@
 
 <script>
   const days = {
-    1: { label: "Day 1 · Thu 10", color: "#C0362C" },
-    2: { label: "Day 2 · Fri 11", color: "#A8641C" },
-    3: { label: "Day 3 · Sat 12", color: "#2E7D4F" },
-    4: { label: "Day 4 · Sun 13", color: "#6B4FB0" },
+    1: { label: "Day 1 · Thu 10 — Yokohama", color: "#C0362C" },
+    2: { label: "Day 2 · Fri 11 — Hakone",   color: "#A8641C" },
+    3: { label: "Day 3 · Sat 12 — Nikkō",    color: "#2E7D4F" },
+    4: { label: "Day 4 · Sun 13 — Kamakura", color: "#6B4FB0" },
+    5: { label: "Rain plan — in Tokyo",      color: "#6E6A66" },
   };
 
   const places = [
-    // Day 1 — Touchdown & slow Shinjuku
-    { day:1, time:"04:45", name:"Haneda Airport, Terminal 3", lat:35.54936, lon:139.77991, note:"Arrival point — red-eye from Manila", transport:"Airport Limousine Bus to Busta Shinjuku · ~35–50 min, ¥1,400", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/1280px-All_haneda.jpg" },
-    { day:1, time:"06:15", name:"Odakyu Hotel Century Southern Tower", lat:35.68580, lon:139.70090, note:"Home base, all 3 nights — above Shinjuku Station South Exit", transport:"Steps from the Busta Shinjuku bus arrival; Odakyu line downstairs is the Hakone train" },
-    { day:1, time:"09:00", name:"Shinjuku Gyoen National Garden", lat:35.68516, lon:139.71000, note:"Slow morning — lawns, greenhouse, French garden. ¥500", transport:"~10-min walk from the hotel" },
-    { day:1, time:"11:00", name:"Meiji Jingu", lat:35.67637, lon:139.69932, note:"Forest shrine, giant torii, sake-barrel wall. Free", transport:"JR to Harajuku, ~5 min", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Meiji_Jingu_2023-3.jpg/1280px-Meiji_Jingu_2023-3.jpg" },
-    { day:1, time:"12:15", name:"Harajuku & Omotesandō", lat:35.66896, lon:139.70598, note:"Lunch + stroll — Ura-Hara backstreets, Omotesandō flagships, Takeshita Street", transport:"walk from Meiji Jingu's south exit", shop:true, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/JRE-Harajuku-Station-07.jpg/1280px-JRE-Harajuku-Station-07.jpg" },
-    { day:1, time:"20:00", name:"Tokyo Metropolitan Government Building", lat:35.68955, lon:139.69171, note:"Free observation deck, 45F ~202 m — open till ~22:00", transport:"~10-min walk from the hotel", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Tokyo_Metropolitan_Government_Building_2024.jpg/1280px-Tokyo_Metropolitan_Government_Building_2024.jpg" },
-    { day:1, time:"18:30", name:"Omoide Yokochō", lat:35.69306, lon:139.69953, note:"Dinner — lantern-lit yakitori counters under the tracks", transport:"~6-min walk, west of Shinjuku Station" },
-    { day:1, time:"21:00", name:"Golden Gai / Kabukichō", lat:35.69395, lon:139.70475, note:"Optional nightcap — tiny themed bars, atmospheric walk-through", transport:"~8-min walk, north-east of the station", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/G2_Street_20090626_2.jpg/1280px-G2_Street_20090626_2.jpg" },
+    // Day 1 — Yokohama
+    { day:1, time:"04:45", name:"Haneda Airport, Terminal 3", lat:35.54936, lon:139.77991, note:"Arrival — red-eye from Manila", transport:"Airport Limousine Bus to Busta Shinjuku · ~35–50 min, ¥1,400", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/1280px-All_haneda.jpg" },
+    { day:1, time:"06:15", name:"Odakyu Hotel Century Southern Tower", lat:35.68580, lon:139.70090, note:"Home base, all 3 nights — above Shinjuku Station South Exit; nap here after the flight", transport:"steps from the Busta Shinjuku bus arrival" },
+    { day:1, time:"15:00", name:"Minato Mirai, Yokohama", lat:35.45580, lon:139.63800, note:"Harbour district — Cosmo World Ferris wheel, Nippon Maru tall ship, waterfront promenade", transport:"JR Shōnan–Shinjuku Line direct, ~30 min", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Minato_Mirai_In_Blue.jpg/1280px-Minato_Mirai_In_Blue.jpg" },
+    { day:1, time:"15:45", name:"Yokohama Air Cabin (Sakuragichō)", lat:35.45120, lon:139.63130, note:"Urban ropeway over the harbour to the Red Brick Warehouse — runs in light rain", transport:"at Sakuragichō Station" },
+    { day:1, time:"16:00", name:"Yokohama Red Brick Warehouse", lat:35.45270, lon:139.64370, note:"Restored 1910s customs warehouses — shops, cafés, covered event hall", transport:"Air Cabin from Sakuragichō, or 12-min walk", shop:true },
+    { day:1, time:"16:15", name:"Cup Noodles Museum", lat:35.45530, lon:139.63890, note:"Design your own cup — pick the soup and toppings. Last entry 17:00, fully indoors", transport:"~8-min walk from the Air Cabin", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Yokohama_Cosmoworld_2022.jpg/1280px-Yokohama_Cosmoworld_2022.jpg" },
+    { day:1, time:"17:00", name:"Landmark Tower Sky Garden, 69F", lat:35.45470, lon:139.63140, note:"~296 m full-circle deck over the bay — best at dusk. Open till 21:00", transport:"connected to Minato Mirai Station", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Yokohama_Landmark_Tower_201507.JPG/1280px-Yokohama_Landmark_Tower_201507.JPG" },
+    { day:1, time:"18:00", name:"Yokohama Chinatown", lat:35.44370, lon:139.64590, note:"Largest Chinatown in Japan — 600+ restaurants, nikuman & xiao long bao stalls. Covered", transport:"Minatomirai Line to Motomachi-Chūkagai", shop:true, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Yokohama_Chinatown_signage_2015.jpg/1280px-Yokohama_Chinatown_signage_2015.jpg" },
 
-    // Day 2 — Old Tokyo
-    { day:2, time:"09:00", name:"Sensō-ji & Kaminarimon", lat:35.71476, lon:139.79665, note:"Tokyo's oldest temple (645) + Nakamise-dōri stalls. Free", transport:"Marunouchi → Ginza line, ~35 min from Shinjuku", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Sensoji_2023.jpg/1280px-Sensoji_2023.jpg" },
-    { day:2, time:"10:45", name:"Tokyo Skytree", lat:35.71010, lon:139.81069, note:"Tembo Deck 350 m (~¥2,400), or free Solamachi rooftop garden", transport:"~20-min walk across Sumida Park", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Tokyo_Skytree_2014_%E2%85%A2.jpg/1280px-Tokyo_Skytree_2014_%E2%85%A2.jpg" },
-    { day:2, time:"14:20", name:"Ueno Park", lat:35.71542, lon:139.77320, note:"Pick one: Tokyo National Museum (¥1,000), Ueno Zoo (¥600), or just Shinobazu Pond", transport:"Ginza line, Asakusa → Ueno, ~5 min", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Ueno_park.jpg/1280px-Ueno_park.jpg" },
-    { day:2, time:"14:20", name:"Tokyo National Museum", lat:35.71879, lon:139.77650, note:"Samurai armour, swords, screens, Buddhist sculpture — Honkan highlights, ~90 min", transport:"north end of Ueno Park", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tokyo_National_Museum%2C_Honkan_2010.jpg/1280px-Tokyo_National_Museum%2C_Honkan_2010.jpg" },
-    { day:2, time:"16:00", name:"Ameyoko Market", lat:35.70889, lon:139.77451, note:"~400 stalls under the JR tracks — snacks, sneakers, seafood, standing bars", transport:"walk south through Ueno Park", shop:true, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ueno_20241210_133139.jpg/1280px-Ueno_20241210_133139.jpg" },
-    { day:2, time:"17:30", name:"Akihabara Electric Town", lat:35.69836, lon:139.77313, note:"Arcades, Super Potato retro games, Mandarake, gachapon halls, themed cafés", transport:"1 JR stop from Okachimachi, or 8-min walk", shop:true, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png/1280px-Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png" },
-    { day:2, time:"19:00", name:"Kanda railway-arch izakaya", lat:35.69171, lon:139.77086, note:"Dinner — grilled skewers and highballs under the tracks toward Kanda", transport:"~8-min walk south from Akihabara" },
+    // Day 2 — Hakone
+    { day:2, time:"07:30", name:"Odakyu Sightseeing Service Center, Shinjuku", lat:35.69073, lon:139.69966, note:"Buy the Hakone Free Pass (¥6,100, 2-day) + reserve the Romancecar both ways", transport:"ground floor, Shinjuku West", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Odakyu-Type60000-MSE-Hakone.jpg/1280px-Odakyu-Type60000-MSE-Hakone.jpg" },
+    { day:2, time:"09:15", name:"Hakone-Yumoto Station", lat:35.23283, lon:139.10694, note:"Gateway to the loop — change to the Hakone Tozan switchback railway", transport:"Odakyū Romancecar from Shinjuku, ~85 min (+¥1,200 surcharge)" },
+    { day:2, time:"10:15", name:"Hakone Open-Air Museum", lat:35.24466, lon:139.05617, note:"Moore & Miró sculpture on the hillside, Picasso pavilion, hot-spring foot bath. All-weather anchor", transport:"Chōkoku-no-Mori stn, one stop below Gōra", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Hakone5.jpg/1280px-Hakone5.jpg" },
+    { day:2, time:"12:45", name:"Ōwakudani", lat:35.24466, lon:139.01972, note:"Ropeway over a live volcanic valley — sulphur vents, Fuji ahead on a clear day, black eggs (¥500/5)", transport:"Sōunzan funicular → Hakone Ropeway", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/1280px-Owakudani_-_Hakone_%2827369344357%29.jpg" },
+    { day:2, time:"14:15", name:"Lake Ashi — pirate-ship cruise", lat:35.21890, lon:139.01580, note:"Mock-galleon sightseeing boat to Moto-Hakone, ~30 min", transport:"ropeway down to Tōgendai pier", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/260505_Moto-Hakone_Hakone_Japan01s3.jpg/1280px-260505_Moto-Hakone_Hakone_Japan01s3.jpg" },
+    { day:2, time:"15:00", name:"Hakone Shrine — torii in the water", lat:35.20431, lon:139.02581, note:"The red Torii of Peace standing in Lake Ashi. Free (photo queue on weekends)", transport:"walk from Moto-Hakone pier", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Hakonejinja_-01.jpg/1280px-Hakonejinja_-01.jpg" },
+    { day:2, time:"16:15", name:"Hakone Yuryō (onsen)", lat:35.23600, lon:139.10300, note:"Optional — reservable private open-air baths near Yumoto (~¥3,500)", transport:"free shuttle from Hakone-Yumoto Station" },
 
-    // Day 3 — Hakone loop
-    { day:3, time:"07:30", name:"Odakyu Sightseeing Service Center, Shinjuku", lat:35.69073, lon:139.69966, note:"Buy the Hakone Free Pass (¥6,100, 2-day) + reserve the Romancecar", transport:"ground floor, Shinjuku West", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Odakyu-Type60000-MSE-Hakone.jpg/1280px-Odakyu-Type60000-MSE-Hakone.jpg" },
-    { day:3, time:"09:15", name:"Hakone-Yumoto Station", lat:35.23283, lon:139.10694, note:"Gateway to the loop — switch to the Hakone Tozan mountain railway", transport:"Odakyu Romancecar from Shinjuku, ~85 min (+¥1,200 surcharge)" },
-    { day:3, time:"10:15", name:"Hakone Open-Air Museum", lat:35.24466, lon:139.05617, note:"Henry Moore & Miró sculpture on the hillside, Picasso pavilion, hot-spring foot bath. ~¥1,800 w/ pass", transport:"Chōkoku-no-Mori stn, one stop below Gōra", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Hakone5.jpg/1280px-Hakone5.jpg" },
-    { day:3, time:"12:45", name:"Ōwakudani", lat:35.24466, lon:139.01972, note:"Ropeway over a live volcanic valley — sulphur vents, Fuji ahead, black eggs (¥500/5)", transport:"Sōunzan funicular → Hakone Ropeway", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/1280px-Owakudani_-_Hakone_%2827369344357%29.jpg" },
-    { day:3, time:"14:15", name:"Lake Ashi — pirate-ship cruise", lat:35.21890, lon:139.01580, note:"Mock-galleon sightseeing boat across the lake, ~30 min, Fuji off the bow", transport:"Ropeway down to Tōgendai pier", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/260505_Moto-Hakone_Hakone_Japan01s3.jpg/1280px-260505_Moto-Hakone_Hakone_Japan01s3.jpg" },
-    { day:3, time:"15:00", name:"Hakone Shrine — torii in the water", lat:35.20431, lon:139.02581, note:"The red Torii of Peace standing in Lake Ashi. Free (expect a photo queue on Saturday)", transport:"walk from Moto-Hakone pier", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Hakonejinja_-01.jpg/1280px-Hakonejinja_-01.jpg" },
-    { day:3, time:"16:15", name:"Hakone Yuryō (onsen)", lat:35.23600, lon:139.10300, note:"Optional — reservable private open-air baths near Yumoto (~¥3,500)", transport:"free shuttle from Hakone-Yumoto Station" },
+    // Day 3 — Nikkō
+    { day:3, time:"07:15", name:"Tōbu Asakusa Station", lat:35.71070, lon:139.79800, note:"Departure — Tōbu Limited Express SPACIA to Nikkō. Buy the NIKKO PASS here", transport:"Ginza / Toei Asakusa lines" },
+    { day:3, time:"09:30", name:"Shinkyō Bridge", lat:36.75390, lon:139.59980, note:"Vermilion arched bridge at the entrance to the shrine precinct — 5-min photo stop", transport:"loop bus from Tōbu-Nikkō, or 20-min walk", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Tobunikkostation-building-sunny-nov3-2016.jpg/1280px-Tobunikkostation-building-sunny-nov3-2016.jpg" },
+    { day:3, time:"10:00", name:"Nikkō Tōshō-gū", lat:36.75810, lon:139.59890, note:"Tokugawa Ieyasu's carved mausoleum — Yōmeimon gate, sleeping cat, 200 steps to the tomb. ¥1,300", transport:"10-min uphill walk from Shinkyō", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/200801_Nikko_Tosho-gu_Nikko_Japan03s3.jpg/1280px-200801_Nikko_Tosho-gu_Nikko_Japan03s3.jpg" },
+    { day:3, time:"11:45", name:"Rinnō-ji Sanbutsudō", lat:36.75500, lon:139.60100, note:"Hall of three 8-metre gold Buddha statues — ¥400", transport:"2-min walk from Tōshō-gū", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NikkoRinnoji5390.jpg/1280px-NikkoRinnoji5390.jpg" },
+    { day:3, time:"13:45", name:"Kegon Falls & Lake Chūzenji", lat:36.73890, lon:139.50300, note:"97-metre waterfall from the lake, elevator to the base. Do only if the sky is holding — last bus back ~16:30", transport:"~45 min bus up the Irohazaka switchbacks (on the pass)", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Lake_chuzenji_and_kegon_waterfall.jpg/1280px-Lake_chuzenji_and_kegon_waterfall.jpg" },
+    { day:3, time:"13:45", name:"Kanmangafuchi Abyss", lat:36.74700, lon:139.58600, note:"Riverside path lined with ~70 weathered Jizō statues — the rain-day alternative, no bus needed", transport:"~20-min walk from the shrines" },
 
-    // Day 4 — Shibuya, teamLab & the late flight
-    { day:4, time:"10:30", name:"Shibuya Scramble Crossing", lat:35.65950, lon:139.70046, note:"The crossing + Hachikō statue — view it from the Tsutaya 2F window or Mag's Park rooftop", transport:"JR Yamanote, 3 min from Shinjuku", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Shibuya_Crossing%2C_Aerial.jpg/1280px-Shibuya_Crossing%2C_Aerial.jpg" },
-    { day:4, time:"11:00", name:"Shibuya Sky", lat:35.65803, lon:139.70160, note:"Open-air rooftop deck, ~229 m, straight down the crossing. ~¥2,700, timed entry", transport:"top of Shibuya Scramble Square, on the station", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/SHIBUYA_SCRAMBLE_SQUARE_East_Tower.jpg/1280px-SHIBUYA_SCRAMBLE_SQUARE_East_Tower.jpg" },
-    { day:4, time:"13:30", name:"teamLab Planets, Toyosu", lat:35.64974, lon:139.79061, note:"Barefoot, wade-through digital-art rooms. ¥3,800, pre-booked slot, open late", transport:"~30 min from Shibuya via Yūrakuchō line + Yurikamome" },
-    { day:4, time:"13:30", name:"Shimokitazawa", lat:35.66131, lon:139.66801, note:"Alt afternoon — secondhand shops, record stores, tiny cafés", transport:"1 stop from Shibuya on the Keiō Inokashira line", shop:true, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Shimokitazawa_Street_2015.jpg/1280px-Shimokitazawa_Street_2015.jpg" },
-    { day:4, time:"13:30", name:"Odaiba", lat:35.62513, lon:139.77577, note:"Alt afternoon — Yurikamome over the Rainbow Bridge, life-size Gundam, bay views", transport:"Yurikamome from Shimbashi", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Odaiba_close_up_-_2025_Jan_14_01-27PM.jpeg/1280px-Odaiba_close_up_-_2025_Jan_14_01-27PM.jpeg" },
-    { day:4, time:"16:30", name:"Ginza", lat:35.67169, lon:139.76490, note:"Souvenirs — Uniqlo/GU flagships, Itōya stationery, Mitsukoshi depachika food hall", transport:"~10 min from Shibuya on the Ginza line", shop:true, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Ginza-WAKO_at_night.jpg/1280px-Ginza-WAKO_at_night.jpg" },
-    { day:4, time:"16:30", name:"Nakameguro / Daikanyama", lat:35.64400, lon:139.69870, note:"Souvenirs, calmer — canal-side design shops, Daikanyama T-Site bookstore", transport:"~7 min from Shibuya on the Tōkyū Tōyoko line", shop:true },
-    { day:4, time:"20:45", name:"Haneda Airport, Terminal 3", lat:35.54936, lon:139.77991, note:"Departure — PR 422, 01:00, back to NAIA T1", transport:"Airport Limousine Bus from Busta Shinjuku, ~45–60 min (last runs ~22:00–22:30)", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/1280px-All_haneda.jpg" },
+    // Day 4 — Kamakura + Enoshima
+    { day:4, time:"09:00", name:"Tsurugaoka Hachimangū", lat:35.32580, lon:139.55600, note:"Kamakura's central shrine at the head of a long approach avenue", transport:"JR Shōnan–Shinjuku Line to Kamakura (~1 hr), 10-min walk up Komachi-dōri", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/TsurugaokaHachiman-M8867.jpg/1280px-TsurugaokaHachiman-M8867.jpg" },
+    { day:4, time:"09:15", name:"Komachi-dōri", lat:35.32000, lon:139.55300, note:"Covered snack-and-craft street from the station to the shrine — taiyaki, matcha soft-serve, souvenirs", transport:"straight out of Kamakura Station east exit", shop:true },
+    { day:4, time:"10:30", name:"Kōtoku-in — Great Buddha", lat:35.31690, lon:139.53580, note:"11.4-metre bronze Buddha (1252), open-air since a 1498 tsunami. Step inside for ¥50", transport:"Enoden to Hase, ~4-min walk", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/230128_Kamakura_Daibutsu_Japan04s3.jpg/1280px-230128_Kamakura_Daibutsu_Japan04s3.jpg" },
+    { day:4, time:"11:15", name:"Hasedera", lat:35.31200, lon:139.53300, note:"Hillside of Kannon statues, a sea-view terrace, and the Benten cave. ¥400", transport:"5-min walk from Kōtoku-in" },
+    { day:4, time:"13:30", name:"Kamakurakōkō-mae crossing", lat:35.30670, lon:139.49030, note:"The Enoden level crossing with the ocean behind it — the anime-opening shot", transport:"Enoden, on the way to Enoshima" },
+    { day:4, time:"14:15", name:"Enoshima", lat:35.29900, lon:139.48050, note:"Island shrine climb, the Sea Candle observation tower, and the wave-cut Iwaya sea caves on the far side", transport:"walk the bridge from Enoshima Station", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Enoshima_Sea_Candle_1.jpg/1280px-Enoshima_Sea_Candle_1.jpg" },
+    { day:4, time:"16:30", name:"Katase-Enoshima Station", lat:35.30640, lon:139.48280, note:"Odakyū terminus — direct train (or the 'Enoshima' Romancecar) back to Shinjuku, ~1h10", transport:"5-min walk from the Enoshima bridge", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Katase-Enoshima_Station_2020-03-22_%281%29_sa.jpg/1280px-Katase-Enoshima_Station_2020-03-22_%281%29_sa.jpg" },
+    { day:4, time:"20:45", name:"Haneda Airport, Terminal 3", lat:35.54936, lon:139.77991, note:"Departure — PR 422, 01:00, back to NAIA T1", transport:"Airport Limousine Bus from Busta Shinjuku (last runs ~22:00–22:30)", photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/1280px-All_haneda.jpg" },
+
+    // Rain plan — in Tokyo
+    { day:5, time:"any", name:"teamLab Planets, Toyosu", lat:35.64974, lon:139.79061, note:"Barefoot digital-art rooms — pre-booked slot, open late. Swap for a whole day trip", transport:"~30 min from Shinjuku via Yūrakuchō line + Yurikamome" },
+    { day:5, time:"any", name:"Ueno museum park", lat:35.71700, lon:139.77400, note:"Tokyo National Museum + Nature & Science + Western Art, all a 5-min walk apart", transport:"JR Yamanote to Ueno", shop:false, photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tokyo_National_Museum%2C_Honkan_2010.jpg/1280px-Tokyo_National_Museum%2C_Honkan_2010.jpg" },
+    { day:5, time:"any", name:"Nakano Broadway", lat:35.70760, lon:139.66570, note:"Covered 1960s mall — vintage manga, watches, retro toys, Mandarake. Rainy-day rabbit hole", transport:"1 stop from Shinjuku on the Chūō line", shop:true },
+    { day:5, time:"any", name:"Thermae-Yu onsen, Shinjuku", lat:35.69550, lon:139.70200, note:"Full hot-spring complex in Kabukichō — indoor + covered outdoor baths, saunas. Soak out a storm", transport:"~10-min walk from the hotel" },
+    { day:5, time:"any", name:"Sumida Aquarium (under Skytree)", lat:35.70980, lon:139.81070, note:"Mall-connected — jellyfish, penguins, a big open tank. Arrive, stay 3 hours, never go outside", transport:"Hanzōmon line to Oshiage" },
   ];
 
   const transitPlaces = [
-    { kind:"subway", name:"Shinjuku Station", lat:35.69003, lon:139.70047, note:"JR / Odakyu / Keiō / Metro hub — Odakyu Romancecar to Hakone, JR Yamanote everywhere" },
-    { kind:"bus",    name:"Busta Shinjuku", lat:35.68660, lon:139.70027, note:"Expressway bus terminal above the station — Airport Limousine Bus to/from Haneda" },
-    { kind:"subway", name:"Harajuku / Meiji-jingūmae", lat:35.67020, lon:139.70270, note:"JR + Chiyoda/Fukutoshin lines — for Meiji Jingu, Takeshita St, Omotesandō" },
-    { kind:"subway", name:"Asakusa Station", lat:35.71100, lon:139.79800, note:"Ginza / Toei Asakusa / Tōbu lines — 2-min walk to Kaminarimon" },
-    { kind:"subway", name:"Tokyo Skytree / Oshiage", lat:35.71061, lon:139.81350, note:"Hanzōmon / Toei / Tōbu lines — under Skytree and Solamachi" },
-    { kind:"subway", name:"Ueno Station", lat:35.71410, lon:139.77740, note:"JR + Ginza + Hibiya lines — Ueno Park, Ameyoko, museums" },
-    { kind:"subway", name:"Akihabara Station", lat:35.69836, lon:139.77313, note:"JR Yamanote / Sōbu + Hibiya line — Electric Town exit" },
-    { kind:"subway", name:"Shibuya Station", lat:35.65803, lon:139.70160, note:"JR + Ginza/Hanzōmon/Fukutoshin + Tōkyū + Keiō — Scramble Square / Shibuya Sky on top" },
-    { kind:"subway", name:"Shinagawa Station", lat:35.62855, lon:139.73876, note:"JR + Keikyū — transfer to the Keikyū line for Haneda (runs later than the buses)" },
-    { kind:"subway", name:"Toyosu Station", lat:35.65460, lon:139.79670, note:"Yūrakuchō line + Yurikamome — nearest to teamLab Planets" },
-    { kind:"subway", name:"Hakone-Yumoto Station", lat:35.23283, lon:139.10694, note:"End of the Odakyu line — start of the 8-mode Hakone transport loop" },
-    { kind:"subway", name:"Odawara Station", lat:35.25600, lon:139.15530, note:"Odakyu + JR + Tōkaidō Shinkansen — transfer point if the Romancecar is booked out" },
+    { kind:"rail", name:"Shinjuku Station", lat:35.69003, lon:139.70047, note:"JR Shōnan–Shinjuku Line to Yokohama & Kamakura; Odakyū Romancecar to Hakone & Enoshima; the Sightseeing Center sells the passes" },
+    { kind:"bus",  name:"Busta Shinjuku", lat:35.68660, lon:139.70027, note:"Expressway bus terminal above the station — Airport Limousine Bus to/from Haneda" },
+    { kind:"rail", name:"Tōbu Asakusa Station", lat:35.71070, lon:139.79800, note:"Tōbu Limited Express SPACIA to Nikkō — the fastest, most frequent route" },
+    { kind:"rail", name:"Shinagawa Station", lat:35.62855, lon:139.73876, note:"JR + Keikyū — transfer to the Keikyū line for Haneda (runs later than the buses)" },
+    { kind:"rail", name:"Yokohama Station", lat:35.46570, lon:139.62220, note:"JR / Tōkyū / Minatomirai lines — ~30 min from Shinjuku" },
+    { kind:"rail", name:"Ōfuna Station", lat:35.35360, lon:139.53200, note:"Junction for the JR line into Kamakura and the Shōnan Monorail" },
+    { kind:"rail", name:"Odawara Station", lat:35.25600, lon:139.15530, note:"Odakyū + JR + Tōkaidō Shinkansen — fallback into Hakone if the Romancecar is booked out" },
+    { kind:"rail", name:"Katase-Enoshima Station", lat:35.30640, lon:139.48280, note:"Odakyū terminus — direct 'Enoshima' Romancecar back to Shinjuku" },
+    { kind:"rail", name:"Toyosu Station", lat:35.65460, lon:139.79670, note:"Yūrakuchō line + Yurikamome — nearest to teamLab Planets" },
   ];
 
   const transitTypes = {
-    subway: { label: "Train / Subway", color: "#1565C0", emoji: "🚇" },
-    bus:    { label: "Airport Bus",    color: "#E65100", emoji: "🚌" },
+    rail: { label: "Train / Line",  color: "#1565C0", emoji: "🚉" },
+    bus:  { label: "Airport bus",   color: "#E65100", emoji: "🚌" },
   };
 
-  const map = L.map('map', { zoomControl: true }).setView([35.55, 139.30], 9);
+  const map = L.map('map', { zoomControl: true }).setView([35.9, 139.3], 8);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
