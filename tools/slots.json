@@ -1,0 +1,39 @@
+{
+  "_comment": [
+    "Hand-curated overrides for the 20 choice slots, applied by tools/extract.cjs.",
+    "",
+    "scope 'fork'   = a whole-day destination choice. Picking one CONSUMES that destination,",
+    "                 so it shows as 'Done on Day N' in every later fork.",
+    "scope 'detail' = a sub-choice inside a day you already committed to (which afternoon stop,",
+    "                 how to reach the airport, where to eat). These NEVER consume anything —",
+    "                 otherwise picking the Okutama day trip would grey out its own afternoon.",
+    "",
+    "Titles are overridden where the extractor guessed wrong: it takes the nearest preceding",
+    "heading, which misfires when a grid sits under an unrelated timeline stop."
+  ],
+
+  "d1-land-at-haneda-terminal-3map-10": { "scope": "detail", "title": "Getting to the hotel" },
+  "d1-breakfast-then-sleep-20":         { "scope": "detail", "title": "Breakfast, then sleep" },
+  "d1-ease-in-outing-pick-one-30":      { "scope": "fork",   "title": "Ease-in outing — pick one" },
+  "d1-dinner-wherever-you-ended-up-40": { "scope": "detail", "title": "Dinner — wherever you ended up" },
+  "d1-a-free-night-view-or-bed-50":     { "scope": "detail", "title": "A free night view, or bed" },
+
+  "d2-pick-10":                         { "scope": "fork",   "title": "Day 2 — pick your whole-day trip" },
+  "d2-pick-your-afternoon-20":          { "scope": "detail", "title": "Pick your afternoon" },
+  "d2-dinner-near-the-hotel-30":        { "scope": "detail", "title": "One more Okutama stop" },
+
+  "d3-pick-10":                         { "scope": "fork",   "title": "Day 3 — pick your whole-day trip" },
+  "d3-second-mito-stop-20":             { "scope": "detail", "title": "Second Mito stop" },
+  "d3-one-more-or-head-back-30":        { "scope": "detail", "title": "One more, or head back" },
+  "d3-limited-express-back-to-ueno-40": { "scope": "detail", "title": "Further afield in Ibaraki" },
+
+  "d4-pick-10":                         { "scope": "fork",   "title": "Day 4 — pick your whole-day trip" },
+  "d4-on-enoshima-pick-your-depth-20":  { "scope": "detail", "title": "On Enoshima — pick your depth" },
+  "d4-head-to-haneda-airport-30":       { "scope": "detail", "title": "Head to Haneda Airport" },
+  "d4-depart-pr-422-to-manila-40":      { "scope": "detail", "title": "Quieter Kamakura add-ons" },
+
+  "drain-pick-10": { "scope": "fork", "title": "Weatherproof — the big indoor one" },
+  "drain-pick-20": { "scope": "fork", "title": "Weatherproof — indoor browsing" },
+  "drain-pick-30": { "scope": "fork", "title": "Weatherproof — a long soak" },
+  "drain-pick-40": { "scope": "fork", "title": "Quieter in-city swaps" }
+}
