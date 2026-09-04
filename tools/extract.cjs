@@ -52,6 +52,21 @@ const itin = read('itinerary.html');
 const mapf = read('map.html');
 const manual = JSON.parse(read('tools/coords.json'));
 
+/* Destinations that recur across days share a group so picking one consumes it. */
+const GROUP_ALIASES = {
+  'kawagoe': /kawagoe/i,
+  'yokohama': /yokohama/i,
+  'hakone': /hakone/i,
+  'nikko': /nikk/i,
+  'nokogiriyama': /nokogiriyama/i,
+  'enoshima': /enoshima/i,
+  'teamlab': /teamlab/i,
+  'nakano': /nakano/i,
+  'kamakura': /kamakura/i,
+  'okutama': /okutama|nippara/i,
+  'mito': /mito|kairakuen/i,
+};
+
 // coords already living in map.html
 const mapPlaces = [...mapf.matchAll(
   /\{\s*day:\s*(\d+),\s*time:"([^"]*)",\s*name:"([^"]*)",\s*lat:\s*([\d.]+),\s*lon:\s*([\d.]+)([^}]*)\}/g
@@ -59,6 +74,13 @@ const mapPlaces = [...mapf.matchAll(
   day: +m[1], time: m[2], name: decode(m[3]),
   lat: +m[4], lon: +m[5],
   shop: /shop:\s*true/.test(m[6]),
+  // Fixed stops belonging to a specific destination (Okutama Station, the
+  // Nippara caves) must only appear when that destination is the day's pick —
+  // otherwise the Day 2 map shows Okutama while you are in Chiba.
+  group: (function (nm) {
+    for (var g in GROUP_ALIASES) if (GROUP_ALIASES[g].test(nm)) return g;
+    return null;
+  })(decode(m[3])),
   photo: (m[6].match(/photo:"([^"]*)"/) || [])[1] || null,
   transport: (m[6].match(/transport:"([^"]*)"/) || [])[1] || null,
   note: (m[6].match(/note:"([^"]*)"/) || [])[1] || null,
@@ -104,20 +126,6 @@ const NOT_A_PLACE = [
 ];
 const isPlace = name => !NOT_A_PLACE.some(re => re.test(decode(name)));
 
-/* Destinations that recur across days share a group so picking one consumes it. */
-const GROUP_ALIASES = {
-  'kawagoe': /kawagoe/i,
-  'yokohama': /yokohama/i,
-  'hakone': /hakone/i,
-  'nikko': /nikk/i,
-  'nokogiriyama': /nokogiriyama/i,
-  'enoshima': /enoshima/i,
-  'teamlab': /teamlab/i,
-  'nakano': /nakano/i,
-  'kamakura': /kamakura/i,
-  'okutama': /okutama|nippara/i,
-  'mito': /mito|kairakuen/i,
-};
 const groupFor = name => {
   const d = decode(name);
   for (const [g, re] of Object.entries(GROUP_ALIASES)) if (re.test(d)) return g;
@@ -146,7 +154,7 @@ for (const panel of panels) {
   const html = itin.slice(panel.start, panel.end);
   let order = 0;
 
-  const gridPositions = [...html.matchAll(/<div class="opt-grid">/g)].map(m => m.index);
+  const gridPositions = [...html.matchAll(/<div class="opt-grid"[^>]*>/g)].map(m => m.index);
 
   for (const gpos of gridPositions) {
     const grid = blockAt(html, gpos);
@@ -171,8 +179,10 @@ for (const panel of panels) {
     slotIdSeen[baseId] = (slotIdSeen[baseId] || 0) + 1;
     const slotId = slotIdSeen[baseId] > 1 ? `${baseId}-${slotIdSeen[baseId]}` : baseId;
 
-    const cardPositions = [...grid.matchAll(/<div class="opt-card[^"]*">/g)].map(m => m.index);
+    const gridAbs = panel.start + gpos;
+    const cardPositions = [...grid.matchAll(/<div class="opt-card[^"]*"[^>]*>/g)].map(m => m.index);
     const options = cardPositions.map(cpos => {
+      const cardAbs = gridAbs + cpos;
       const card = blockAt(grid, cpos);
       const name = decode((card.match(/<span class="opt-name">([\s\S]*?)<\/span>/) || [])[1] || '');
       if (!name) return null;
@@ -196,6 +206,7 @@ for (const panel of panels) {
         note: note || null,
         photo,
         default: /class="opt-card[^"]*\bpick\b/.test(card.slice(0, 60)),
+        _abs: cardAbs,
       };
 
       if (place) {
@@ -225,6 +236,7 @@ for (const panel of panels) {
       title: ov.title || title,
       cost,
       kind: 'choice',
+      _abs: gridAbs,
       options,
     });
   }
@@ -316,11 +328,51 @@ if (dupIds.length) {
 
 /* ---------- emit ---------- */
 
+
+/* ---------- annotate: bake slot/option ids into the HTML ----------
+ * The runtime matches DOM to data by these attributes rather than by comparing
+ * option text, so a wording tweak can never silently unhook a card. Idempotent:
+ * existing attributes are replaced, so re-running is safe.
+ */
+if (process.argv.includes('--annotate')) {
+  let html = itin;
+  const edits = [];
+  for (const slot of slots) {
+    edits.push({ at: slot._abs, tag: '<div class="opt-grid"', attr: ` data-slot="${slot.id}" data-scope="${slot.scope}"` });
+    for (const o of slot.options) {
+      const m = html.slice(o._abs).match(/^<div class="opt-card[^"]*"/);
+      edits.push({ at: o._abs, tag: m ? m[0] : '<div class="opt-card"', attr: ` data-opt="${o.id}"${o.group ? ` data-group="${o.group}"` : ''}` });
+    }
+  }
+  // apply back-to-front so earlier offsets stay valid
+  edits.sort((a, b) => b.at - a.at);
+  let injected = 0;
+  for (const e of edits) {
+    const head = html.slice(e.at, e.at + e.tag.length);
+    if (head !== e.tag) continue;                 // HTML moved under us; skip rather than corrupt
+    const rest = html.slice(e.at + e.tag.length);
+    const closeIdx = rest.indexOf('>');
+    const existing = rest.slice(0, closeIdx);
+    const cleaned = existing.replace(/\s+data-(slot|opt|group|scope)="[^"]*"/g, '');
+    html = html.slice(0, e.at + e.tag.length) + cleaned + e.attr + rest.slice(closeIdx);
+    injected++;
+  }
+  fs.writeFileSync(path.join(ROOT, 'itinerary.html'), html);
+  console.log(`\nannotated itinerary.html: ${injected}/${edits.length} attributes injected`);
+}
+
 if (!process.argv.includes('--report')) {
+  const clean = slots.map(sl => { const { _abs, ...rest } = sl;
+    return { ...rest, options: sl.options.map(o => { const { _abs, ...ro } = o; return ro; }) }; });
+
   const out = `/* GENERATED by tools/extract.cjs on ${new Date().toISOString().slice(0, 10)}.
  * Review by hand, then rename to trip-data.js. Do not edit both.
  */
-window.TRIP_SLOTS = ${JSON.stringify(slots, null, 2)};
+window.TRIP_SLOTS = ${JSON.stringify(clean, null, 2)};
+
+/* Fixed stops (hotel, stations, scheduled sights) lifted from map.html. These
+ * always happen; the day map draws them alongside whichever options are picked. */
+window.TRIP_PLACES = ${JSON.stringify(mapPlaces, null, 2)};
 `;
   fs.writeFileSync(path.join(ROOT, 'trip-data.generated.js'), out);
   console.log(`\nwrote trip-data.generated.js (${(out.length / 1024).toFixed(1)} KB)`);
