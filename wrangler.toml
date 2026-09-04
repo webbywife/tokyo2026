@@ -1,0 +1,23 @@
+# Shared trip state API. Deployed to Angelo's personal Cloudflare account
+# (not eSource, not Pomelo Travel — this is a personal trip).
+#
+#   npm run deploy:worker
+#
+# The write key is a secret, never committed:
+#   wrangler secret put TRIP_KEY
+
+name = "tokyo2026-sync"
+main = "worker/index.js"
+compatibility_date = "2026-09-01"
+account_id = "e1fbec5d4923357bd48428409f0145b7"
+
+# Only the worker ships; the site itself is deployed separately to Pages.
+[build]
+command = ""
+
+[[kv_namespaces]]
+binding = "TRIP"
+id = "495c6391cccf40049077fa64ac5b9359"
+
+[observability]
+enabled = true

@@ -1,0 +1,73 @@
+name: Deploy
+
+# Auto-deploys on every push to main:
+#   - the site  -> Cloudflare Pages  (tokyo2026-8j9.pages.dev)
+#   - the sync API -> Cloudflare Worker (tokyo2026-sync.jiggsfoo.workers.dev)
+#
+# Needs one repo secret: CLOUDFLARE_API_TOKEN
+#   Create at https://dash.cloudflare.com/profile/api-tokens with:
+#     Account > Cloudflare Pages    > Edit
+#     Account > Workers Scripts     > Edit
+#     Account > Workers KV Storage  > Edit
+#   scoped to the "Jose Angelo Abarentos" account only.
+#
+# The account id is not secret and already lives in wrangler.toml.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLOUDFLARE_ACCOUNT_ID: e1fbec5d4923357bd48428409f0145b7
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # No dependencies to install - the tests use node:test and the exclusion
+      # engine is dependency-free by design.
+      - name: Run tests
+        run: npm test
+
+  deploy-site:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build dist/
+        run: node tools/build.cjs
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name tokyo2026 --branch main
+
+  deploy-worker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy sync worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+        # TRIP_KEY is a Worker secret set once via `wrangler secret put`.
+        # It is deliberately NOT in CI - deploys never touch it.

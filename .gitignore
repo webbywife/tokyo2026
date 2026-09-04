@@ -1,0 +1,7 @@
+node_modules/
+.wrangler/
+.dev.vars
+
+# The shared write key. Pasted into each device once; never committed.
+.trip-key
+dist/

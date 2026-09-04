@@ -1,0 +1,17 @@
+{
+  "name": "tokyo2026",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shared itinerary for the Tokyo trip, 10-13 Sep 2026",
+  "scripts": {
+    "test": "node --test test/*.test.js test/*.test.mjs",
+    "extract": "node tools/extract.cjs",
+    "extract:report": "node tools/extract.cjs --report",
+    "deploy:worker": "wrangler deploy",
+    "deploy:site": "wrangler pages deploy . --project-name tokyo2026 --commit-dirty=true",
+    "dev:worker": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
