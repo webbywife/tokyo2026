@@ -45,3 +45,77 @@ Central Tokyo is deliberately just the evenings near Shinjuku + the Rain-plan ta
 Everything is inline HTML/CSS/JS. Edit the matching `.stop` block in `itinerary.html`, or the
 `places` array in `map.html`. No install, no build — open the file in a browser.
 Landmark photos are hot-linked from Wikimedia Commons (1280px thumbnails); outfit photos from Pexels.
+
+---
+
+## Where it's deployed
+
+| What | URL |
+| --- | --- |
+| Site (Cloudflare Pages) | https://tokyo2026-8j9.pages.dev |
+| Site (GitHub Pages, still live) | https://webbywife.github.io/tokyo2026/ |
+| Shared-state API | https://tokyo2026-sync.jiggsfoo.workers.dev |
+
+Both site URLs serve the same thing. GitHub Pages is deliberately left running so
+existing links keep working.
+
+## Autodeploy
+
+Every push to `main` runs the tests, then deploys the site to Pages and the sync
+worker to Cloudflare. See `.github/workflows/deploy.yml`.
+
+**One-time setup — needs a Cloudflare API token:**
+
+1. Go to https://dash.cloudflare.com/profile/api-tokens → *Create Token* → *Custom token*
+2. Scope it to the **Jose Angelo Abarentos** account only, with:
+   - Account · Cloudflare Pages · **Edit**
+   - Account · Workers Scripts · **Edit**
+   - Account · Workers KV Storage · **Edit**
+3. Add it to the repo:
+   ```sh
+   gh secret set CLOUDFLARE_API_TOKEN --repo webbywife/tokyo2026
+   ```
+
+Until that secret exists the deploy jobs fail loudly (by design — better than
+silently skipping and leaving you thinking it shipped).
+
+## The shared trip key
+
+Choices sync between phones through the worker. Reads are open; **writes need a
+shared key**, which is a Worker secret and is never committed — the repo is public.
+
+Each device asks for it once, then remembers it. The key lives locally in
+`.trip-key` (gitignored). To rotate it:
+
+```sh
+node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))" > .trip-key
+wrangler secret put TRIP_KEY < .trip-key
+```
+
+## Working on it
+
+```sh
+npm test              # 31 tests, no dependencies needed
+npm run extract       # re-parse itinerary.html -> trip-data.generated.js
+npm run extract:report  # what the extractor found, writes nothing
+node tools/build.cjs  # assemble dist/ (explicit allowlist, not the repo root)
+
+npm run deploy:worker # manual worker deploy
+npm run deploy:site   # manual site deploy
+```
+
+### How the trip data works
+
+`tools/extract.cjs` parses the option cards out of `itinerary.html` and the places
+array out of `map.html` into one file, merging coordinates from `tools/coords.json`.
+Re-run it after editing the HTML rather than hand-syncing two files.
+
+`tools/slots.json` classifies each choice slot:
+
+- **`fork`** — a whole-day destination. Picking it *consumes* that destination, so it
+  shows as "Done on Day N" in every later fork.
+- **`detail`** — a sub-choice inside a day you already committed to (which afternoon
+  stop, how to reach the airport). These consume nothing.
+
+That distinction matters: without it, picking the Okutama day trip would grey out
+Okutama's own afternoon.
