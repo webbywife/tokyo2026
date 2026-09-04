@@ -3,7 +3,7 @@
  */
 window.TRIP_SLOTS = [
   {
-    "id": "d1-land-at-haneda-terminal-3map-10",
+    "id": "d1-land-at-haneda-terminal-3map",
     "day": "1",
     "dayOrder": 1,
     "order": 10,
@@ -49,13 +49,13 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d1-breakfast-then-sleep-20",
+    "id": "d1-breakfast-then-sleep",
     "day": "1",
     "dayOrder": 1,
     "order": 20,
     "scope": "detail",
     "time": "07:30",
-    "title": "Breakfast, then sleep",
+    "title": "Breakfast — then find somewhere to sleep",
     "cost": "~$4–10 food",
     "kind": "choice",
     "options": [
@@ -110,12 +110,64 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d1-ease-in-outing-pick-one-30",
+    "id": "d1-kill-the-gap-until-check-in-pick-one",
     "day": "1",
     "dayOrder": 1,
     "order": 30,
+    "scope": "detail",
+    "time": "08:30",
+    "title": "Kill the gap until check-in — pick one",
+    "cost": "free–$22",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "thermae-yu-bathe-and-actually-sleep",
+        "group": "thermae-yu-bathe-and-actually-sleep",
+        "name": "Thermae-Yu — bathe and actually sleep",
+        "transport": "~11-min walk · open 24 hours",
+        "cost": "¥3,000–3,500 · ~$22",
+        "note": "The only option here where you get real horizontal sleep. A proper hot-spring complex with reclining-chair rest lounges — bathe off the flight, then crash until early afternoon on one admission. Air-conditioned, which matters at 31 °C. Tattoos restricted.",
+        "photo": null,
+        "default": true,
+        "lat": 35.6945,
+        "lon": 139.70502,
+        "_coordSrc": "coords.json/alias"
+      },
+      {
+        "id": "shinjuku-gyoen-sit-under-the-trees",
+        "group": "shinjuku-gyoen-sit-under-the-trees",
+        "name": "Shinjuku Gyoen — sit under the trees",
+        "transport": "~10-min walk · opens 09:00",
+        "cost": "¥500 · ~$3.50",
+        "note": "Now the closest thing to the hotel there is. Lawns, huge shade trees, a greenhouse and a tea house — a good place to drift for a few hours if you'd rather be outside than indoors. Two catches: it doesn't open until 09:00, so breakfast has to stretch; and mid-September is hot, so take the shade on the English-landscape lawn, not the open grass. Open till 18:00 in September, closed Mondays — all four of our days are fine.",
+        "photo": null,
+        "default": false,
+        "lat": 35.68507,
+        "lon": 139.70955,
+        "_coordSrc": "coords.json/alias"
+      },
+      {
+        "id": "manboo-a-net-cafe-booth",
+        "group": "manboo-a-net-cafe-booth",
+        "name": "Manboo — a net-café booth",
+        "transport": "~2-min walk · 24 hours",
+        "cost": "¥1,500–2,500 · ~$10–17",
+        "note": "The cheap, unglamorous fallback and the nearest thing to the hotel. A private reclining booth, free drinks, showers, and nobody minding if you sleep for five hours. Less pleasant than the onsen, half the price, and 2 minutes away.",
+        "photo": null,
+        "default": false,
+        "lat": 35.69024,
+        "lon": 139.7105,
+        "_coordSrc": "coords.json/alias"
+      }
+    ]
+  },
+  {
+    "id": "d1-ease-in-outing-pick-one",
+    "day": "1",
+    "dayOrder": 1,
+    "order": 40,
     "scope": "fork",
-    "time": "15:00",
+    "time": "16:00",
     "title": "Ease-in outing — pick one",
     "cost": "free–$25",
     "kind": "choice",
@@ -126,7 +178,7 @@ window.TRIP_SLOTS = [
         "name": "Shinjuku circle: Gyoen → Meiji Jingu → Harajuku at dusk",
         "transport": "zero transit — all within ~2 km of the hotel",
         "cost": "¥500",
-        "note": "The lowest-effort option, and the safest on no sleep: the garden (last entry ~16:00), the forested shrine at golden hour, then Omotesandō and Takeshita Street after dark. Walk the loop back to the hotel.",
+        "note": "The lowest-effort option, and the safest on no sleep: the garden (September hours, open till 18:00), the forested shrine at golden hour, then Omotesandō and Takeshita Street after dark. Walk the loop back to the hotel.",
         "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Shinjuku_Gyoen_National_Garden_-_sakura_3.JPG/1280px-Shinjuku_Gyoen_National_Garden_-_sakura_3.JPG",
         "default": true,
         "lat": 35.68516,
@@ -214,10 +266,10 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d1-dinner-wherever-you-ended-up-40",
+    "id": "d1-dinner-wherever-you-ended-up",
     "day": "1",
     "dayOrder": 1,
-    "order": 40,
+    "order": 50,
     "scope": "detail",
     "time": "19:00",
     "title": "Dinner — wherever you ended up",
@@ -264,10 +316,10 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d1-a-free-night-view-or-bed-50",
+    "id": "d1-a-free-night-view-or-bed",
     "day": "1",
     "dayOrder": 1,
-    "order": 50,
+    "order": 60,
     "scope": "detail",
     "time": "20:30",
     "title": "A free night view, or bed",
@@ -314,7 +366,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d2-pick-10",
+    "id": "d2-pick",
     "day": "2",
     "dayOrder": 2,
     "order": 10,
@@ -366,7 +418,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d2-pick-your-afternoon-20",
+    "id": "d2-pick-your-afternoon",
     "day": "2",
     "dayOrder": 2,
     "order": 20,
@@ -418,7 +470,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d2-dinner-near-the-hotel-30",
+    "id": "d2-dinner-near-the-hotel",
     "day": "2",
     "dayOrder": 2,
     "order": 30,
@@ -470,7 +522,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d3-pick-10",
+    "id": "d3-pick",
     "day": "3",
     "dayOrder": 3,
     "order": 10,
@@ -522,7 +574,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d3-second-mito-stop-20",
+    "id": "d3-second-mito-stop",
     "day": "3",
     "dayOrder": 3,
     "order": 20,
@@ -572,7 +624,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d3-one-more-or-head-back-30",
+    "id": "d3-one-more-or-head-back",
     "day": "3",
     "dayOrder": 3,
     "order": 30,
@@ -622,7 +674,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d3-limited-express-back-to-ueno-40",
+    "id": "d3-limited-express-back-to-ueno",
     "day": "3",
     "dayOrder": 3,
     "order": 40,
@@ -674,7 +726,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d4-pick-10",
+    "id": "d4-pick",
     "day": "4",
     "dayOrder": 4,
     "order": 10,
@@ -726,7 +778,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d4-on-enoshima-pick-your-depth-20",
+    "id": "d4-on-enoshima-pick-your-depth",
     "day": "4",
     "dayOrder": 4,
     "order": 20,
@@ -778,7 +830,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d4-head-to-haneda-airport-30",
+    "id": "d4-head-to-haneda-airport",
     "day": "4",
     "dayOrder": 4,
     "order": 30,
@@ -824,7 +876,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "d4-depart-pr-422-to-manila-40",
+    "id": "d4-depart-pr-422-to-manila",
     "day": "4",
     "dayOrder": 4,
     "order": 40,
@@ -889,7 +941,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "drain-pick-10",
+    "id": "drain-pick",
     "day": "rain",
     "dayOrder": 5,
     "order": 10,
@@ -939,7 +991,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "drain-pick-20",
+    "id": "drain-pick-2",
     "day": "rain",
     "dayOrder": 5,
     "order": 20,
@@ -991,7 +1043,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "drain-pick-30",
+    "id": "drain-pick-3",
     "day": "rain",
     "dayOrder": 5,
     "order": 30,
@@ -1010,7 +1062,7 @@ window.TRIP_SLOTS = [
         "note": "A full onsen complex with real hot-spring water trucked in from Nakaizu, indoor and covered outdoor baths, saunas and lounging areas — walk over, stay half a day. Tattoos restricted.",
         "photo": null,
         "default": true,
-        "lat": 35.69451,
+        "lat": 35.6945,
         "lon": 139.70502,
         "_coordSrc": "coords.json/alias"
       },
@@ -1030,7 +1082,7 @@ window.TRIP_SLOTS = [
     ]
   },
   {
-    "id": "drain-pick-40",
+    "id": "drain-pick-4",
     "day": "rain",
     "dayOrder": 5,
     "order": 40,

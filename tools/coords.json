@@ -24,7 +24,10 @@
     "Thermae-Yu, Shinjuku": "Thermae-Yu",
     "Omoide Yokochō, Shinjuku": "Omoide Yokocho",
     "Edinburgh (珈琲貴族エジンバラ)": "Edinburgh Coffee Shinjuku",
-    "Saint Marc / Veloce, Shinjuku-gyoemmae": "Saint Marc Cafe Shinjuku-gyoemmae"
+    "Saint Marc / Veloce, Shinjuku-gyoemmae": "Saint Marc Cafe Shinjuku-gyoemmae",
+    "Thermae-Yu — bathe and actually sleep": "Thermae-Yu",
+    "Shinjuku Gyoen — sit under the trees": "Shinjuku Gyoen",
+    "Manboo — a net-café booth": "Manboo Shinjuku"
   },
   "APA Hotel Shinjuku-Gyoemmae": {
     "lat": 35.69003,
@@ -72,8 +75,9 @@
     "lon": 139.69669
   },
   "Thermae-Yu": {
-    "lat": 35.69451,
-    "lon": 139.70502
+    "lat": 35.6945,
+    "lon": 139.70502,
+    "note": "24h onsen, confirmed via OSM public_bath node"
   },
   "Isetan Shinjuku": {
     "lat": 35.69164,
@@ -170,5 +174,10 @@
     "lat": 35.68887,
     "lon": 139.7101,
     "note": "opens 07:00"
+  },
+  "Manboo Shinjuku": {
+    "lat": 35.69024,
+    "lon": 139.7105,
+    "note": "net cafe, ~2-min walk; 24h"
   }
 }

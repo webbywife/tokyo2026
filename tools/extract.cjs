@@ -139,6 +139,7 @@ const slotOverrides = JSON.parse(read('tools/slots.json'));
 const slots = [];
 let unresolved = [];
 let unknownSlots = [];
+const slotIdSeen = {};
 
 for (const panel of panels) {
   if (panel.day === 'budget') continue;
@@ -162,7 +163,13 @@ for (const panel of panels) {
     const time = times.length ? decode(times[times.length - 1][1]) : null;
 
     order += 10;
-    const slotId = `d${panel.day}-${slug(title) || 'pick'}-${order}`.replace(/--+/g, '-');
+    /* The id must NOT contain `order`. Inserting a grid renumbers every slot
+     * after it, which would silently repoint saved choices and drop the
+     * hand-curated fork/detail scopes — the same failure as the old positional
+     * storage. Identity comes from day + title; order only sorts. */
+    const baseId = `d${panel.day}-${slug(title) || 'pick'}`.replace(/--+/g, '-');
+    slotIdSeen[baseId] = (slotIdSeen[baseId] || 0) + 1;
+    const slotId = slotIdSeen[baseId] > 1 ? `${baseId}-${slotIdSeen[baseId]}` : baseId;
 
     const cardPositions = [...grid.matchAll(/<div class="opt-card[^"]*">/g)].map(m => m.index);
     const options = cardPositions.map(cpos => {
