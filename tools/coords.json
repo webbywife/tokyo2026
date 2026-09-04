@@ -1,9 +1,7 @@
 {
   "_comment": "Coordinates geocoded 2026-09-04 via Nominatim/OSM, plus manual anchors. Merged with the coords already present in map.html by tools/extract.cjs. Accuracy is building-level unless noted.",
-
   "_aliases": {
     "_comment": "Exact option-card name -> coordinate key. Explicit beats fuzzy matching; add a line here when the extractor reports a missing coord.",
-    "Café on Shinjuku Southern Terrace": "Shinjuku Southern Terrace",
     "Ichiran or Fūunji ramen": "Fuunji ramen",
     "Okutama — Nippara caves, Hatonosu gorge, Lake Okutama": "Nippara Limestone Cave",
     "Hakone — the full loop (revisit)": "Hakone-Yumoto",
@@ -24,45 +22,153 @@
     "Ibaraki Prefectural Museum of History / Mito Art Tower": "Ibaraki Prefectural Museum of History",
     "Kasama": "Kasama Inari Shrine",
     "Thermae-Yu, Shinjuku": "Thermae-Yu",
-    "Omoide Yokochō, Shinjuku": "Omoide Yokocho"
+    "Omoide Yokochō, Shinjuku": "Omoide Yokocho",
+    "Edinburgh (珈琲貴族エジンバラ)": "Edinburgh Coffee Shinjuku",
+    "Saint Marc / Veloce, Shinjuku-gyoemmae": "Saint Marc Cafe Shinjuku-gyoemmae"
   },
-
-  "APA Hotel Shinjuku-Gyoemmae": { "lat": 35.69003, "lon": 139.70892, "note": "block-level (Shinjuku 2-2-8); OSM has no APA buildings tagged in Shinjuku ward" },
-
-  "Busta Shinjuku": { "lat": 35.68880, "lon": 139.70074 },
-  "Shinjuku Station": { "lat": 35.69022, "lon": 139.69962 },
-  "Shinjuku-sanchome Station": { "lat": 35.69253, "lon": 139.70577 },
-  "Shinjuku-gyoemmae Station": { "lat": 35.68857, "lon": 139.71074 },
-  "Shinjuku Gyoen": { "lat": 35.68507, "lon": 139.70955 },
-  "Shinjuku Southern Terrace": { "lat": 35.68733, "lon": 139.70040 },
-  "Tokyo Metropolitan Government Building": { "lat": 35.68950, "lon": 139.69171 },
-  "Omoide Yokocho": { "lat": 35.69302, "lon": 139.69970 },
-  "Golden Gai": { "lat": 35.69399, "lon": 139.70470 },
-  "Fuunji ramen": { "lat": 35.68689, "lon": 139.69669 },
-  "Thermae-Yu": { "lat": 35.69451, "lon": 139.70502 },
-  "Isetan Shinjuku": { "lat": 35.69164, "lon": 139.70460 },
-
-  "Nippara Limestone Cave": { "lat": 35.85243, "lon": 139.04077 },
-  "Gyokudo Art Museum": { "lat": 35.80016, "lon": 139.18411 },
-  "Ogochi Shrine": { "lat": 35.77660, "lon": 139.02075 },
-  "Hakone-Yumoto": { "lat": 35.23320, "lon": 139.10347 },
-
-  "Kairakuen": { "lat": 36.37514, "lon": 140.45354 },
-  "Hitachi Seaside Park": { "lat": 36.40253, "lon": 140.59435 },
-  "Art Tower Mito": { "lat": 36.38048, "lon": 140.46531 },
-  "Lake Semba": { "lat": 36.37000, "lon": 140.46111 },
-  "Ibaraki Prefectural Museum of History": { "lat": 36.38090, "lon": 140.45095, "note": "street-level, on Rekishikan-dori in Mito" },
-  "Kasama Inari Shrine": { "lat": 36.38547, "lon": 140.25438 },
-
-  "Kamakura Station": { "lat": 35.31900, "lon": 139.55068 },
-  "Enoshima Sea Candle": { "lat": 35.29976, "lon": 139.47848 },
-  "Enoshima Iwaya Caves": { "lat": 35.29929, "lon": 139.47573, "note": "street-level, on Oiwayamichi at the west tip" },
-  "Enoshima Aquarium": { "lat": 35.31007, "lon": 139.47944 },
-
-  "Shibuya Scramble Square": { "lat": 35.65838, "lon": 139.70222 },
-  "Spa LaQua": { "lat": 35.70713, "lon": 139.75294 },
-  "Yanaka Ginza": { "lat": 35.72767, "lon": 139.76532 },
-  "Kagurazaka": { "lat": 35.70109, "lon": 139.74123 },
-  "Kiyosumi Gardens": { "lat": 35.67998, "lon": 139.79779 },
-  "Gotokuji": { "lat": 35.64850, "lon": 139.64726 }
+  "APA Hotel Shinjuku-Gyoemmae": {
+    "lat": 35.69003,
+    "lon": 139.70892,
+    "note": "block-level (Shinjuku 2-2-8); OSM has no APA buildings tagged in Shinjuku ward"
+  },
+  "Busta Shinjuku": {
+    "lat": 35.6888,
+    "lon": 139.70074
+  },
+  "Shinjuku Station": {
+    "lat": 35.69022,
+    "lon": 139.69962
+  },
+  "Shinjuku-sanchome Station": {
+    "lat": 35.69253,
+    "lon": 139.70577
+  },
+  "Shinjuku-gyoemmae Station": {
+    "lat": 35.68857,
+    "lon": 139.71074
+  },
+  "Shinjuku Gyoen": {
+    "lat": 35.68507,
+    "lon": 139.70955
+  },
+  "Shinjuku Southern Terrace": {
+    "lat": 35.68733,
+    "lon": 139.7004
+  },
+  "Tokyo Metropolitan Government Building": {
+    "lat": 35.6895,
+    "lon": 139.69171
+  },
+  "Omoide Yokocho": {
+    "lat": 35.69302,
+    "lon": 139.6997
+  },
+  "Golden Gai": {
+    "lat": 35.69399,
+    "lon": 139.7047
+  },
+  "Fuunji ramen": {
+    "lat": 35.68689,
+    "lon": 139.69669
+  },
+  "Thermae-Yu": {
+    "lat": 35.69451,
+    "lon": 139.70502
+  },
+  "Isetan Shinjuku": {
+    "lat": 35.69164,
+    "lon": 139.7046
+  },
+  "Nippara Limestone Cave": {
+    "lat": 35.85243,
+    "lon": 139.04077
+  },
+  "Gyokudo Art Museum": {
+    "lat": 35.80016,
+    "lon": 139.18411
+  },
+  "Ogochi Shrine": {
+    "lat": 35.7766,
+    "lon": 139.02075
+  },
+  "Hakone-Yumoto": {
+    "lat": 35.2332,
+    "lon": 139.10347
+  },
+  "Kairakuen": {
+    "lat": 36.37514,
+    "lon": 140.45354
+  },
+  "Hitachi Seaside Park": {
+    "lat": 36.40253,
+    "lon": 140.59435
+  },
+  "Art Tower Mito": {
+    "lat": 36.38048,
+    "lon": 140.46531
+  },
+  "Lake Semba": {
+    "lat": 36.37,
+    "lon": 140.46111
+  },
+  "Ibaraki Prefectural Museum of History": {
+    "lat": 36.3809,
+    "lon": 140.45095,
+    "note": "street-level, on Rekishikan-dori in Mito"
+  },
+  "Kasama Inari Shrine": {
+    "lat": 36.38547,
+    "lon": 140.25438
+  },
+  "Kamakura Station": {
+    "lat": 35.319,
+    "lon": 139.55068
+  },
+  "Enoshima Sea Candle": {
+    "lat": 35.29976,
+    "lon": 139.47848
+  },
+  "Enoshima Iwaya Caves": {
+    "lat": 35.29929,
+    "lon": 139.47573,
+    "note": "street-level, on Oiwayamichi at the west tip"
+  },
+  "Enoshima Aquarium": {
+    "lat": 35.31007,
+    "lon": 139.47944
+  },
+  "Shibuya Scramble Square": {
+    "lat": 35.65838,
+    "lon": 139.70222
+  },
+  "Spa LaQua": {
+    "lat": 35.70713,
+    "lon": 139.75294
+  },
+  "Yanaka Ginza": {
+    "lat": 35.72767,
+    "lon": 139.76532
+  },
+  "Kagurazaka": {
+    "lat": 35.70109,
+    "lon": 139.74123
+  },
+  "Kiyosumi Gardens": {
+    "lat": 35.67998,
+    "lon": 139.79779
+  },
+  "Gotokuji": {
+    "lat": 35.6485,
+    "lon": 139.64726
+  },
+  "Edinburgh Coffee Shinjuku": {
+    "lat": 35.69043,
+    "lon": 139.70627,
+    "note": "24/7 kissaten, 4-min walk from the hotel"
+  },
+  "Saint Marc Cafe Shinjuku-gyoemmae": {
+    "lat": 35.68887,
+    "lon": 139.7101,
+    "note": "opens 07:00"
+  }
 }

@@ -60,16 +60,16 @@ window.TRIP_SLOTS = [
     "kind": "choice",
     "options": [
       {
-        "id": "cafe-on-shinjuku-southern-terrace",
-        "group": "cafe-on-shinjuku-southern-terrace",
-        "name": "Café on Shinjuku Southern Terrace",
-        "transport": "~15-min walk — it’s by Shinjuku Stn, not the hotel",
+        "id": "edinburgh",
+        "group": "edinburgh",
+        "name": "Edinburgh (珈琲貴族エジンバラ)",
+        "transport": "~4-min walk · open 24 hours",
         "cost": "$6–9",
-        "note": "A terrace bakery-café opens around 07:00 — coffee and a sit before you crash.",
+        "note": "An old-school kissaten around the corner, and the only thing near the hotel actually open when you land — every chain here opens at 07:00. Coffee and a proper sit-down before you crash. Smoking is separated, not banned.",
         "photo": null,
         "default": true,
-        "lat": 35.68733,
-        "lon": 139.7004,
+        "lat": 35.69043,
+        "lon": 139.70627,
         "_coordSrc": "coords.json/alias"
       },
       {
@@ -82,6 +82,19 @@ window.TRIP_SLOTS = [
         "photo": null,
         "default": false,
         "pinnable": false
+      },
+      {
+        "id": "saint-marc-veloce-shinjuku-gyoemmae",
+        "group": "saint-marc-veloce-shinjuku-gyoemmae",
+        "name": "Saint Marc / Veloce, Shinjuku-gyoemmae",
+        "transport": "~3-min walk · opens 07:00",
+        "cost": "$4–7",
+        "note": "If you sleep past seven — two chain cafés a few doors apart by the station exit, both open at 07:00. Cheap, fast, and you are back in bed by eight.",
+        "photo": null,
+        "default": false,
+        "lat": 35.68887,
+        "lon": 139.7101,
+        "_coordSrc": "coords.json/alias"
       },
       {
         "id": "standing-soba-in-the-station",
