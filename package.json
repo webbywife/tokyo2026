@@ -9,7 +9,8 @@
     "extract:report": "node tools/extract.cjs --report",
     "deploy:worker": "wrangler deploy",
     "deploy:site": "wrangler pages deploy . --project-name tokyo2026 --commit-dirty=true",
-    "dev:worker": "wrangler dev"
+    "dev:worker": "wrangler dev",
+    "ci:secret": "node tools/sync-ci-secret.cjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

@@ -5,3 +5,4 @@ node_modules/
 # The shared write key. Pasted into each device once; never committed.
 .trip-key
 dist/
+credentials.yml
