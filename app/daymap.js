@@ -33,7 +33,11 @@
     var pickedGroups = {};
     (resolvedSlots || []).forEach(function (slot) {
       if (String(slot.day) !== String(day)) return;
-      slot.options.forEach(function (o) { if (o.isPicked && o.group) pickedGroups[o.group] = true; });
+      slot.options.forEach(function (o) {
+        if (!o.isPicked) return;
+        if (o.group) pickedGroups[o.group] = true;
+        (o.alsoConsumes || []).forEach(function (g) { pickedGroups[g] = true; });
+      });
     });
 
     var out = places

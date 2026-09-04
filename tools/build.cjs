@@ -15,7 +15,7 @@ const ROOT = path.join(__dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 
 /* Explicit allowlist. Add here when a new served file appears. */
-const FILES = ['index.html', 'itinerary.html', 'map.html', 'trip-data.js'];
+const FILES = ['index.html', 'itinerary.html', 'map.html', 'trip-places.js', 'trip-data.js'];
 const DIRS = ['app'];
 
 fs.rmSync(DIST, { recursive: true, force: true });

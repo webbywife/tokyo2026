@@ -49,8 +49,16 @@ function blockAt(html, open) {
 /* ---------- inputs ---------- */
 
 const itin = read('itinerary.html');
-const mapf = read('map.html');
 const manual = JSON.parse(read('tools/coords.json'));
+
+/* Places live in trip-places.js, which map.html and itinerary.html both load.
+ * Parsing them back out of map.html (as this used to) made map.html unable to
+ * read the generated data — the source would have been its own output. */
+const mapPlaces = (function () {
+  var sandbox = {};
+  new Function('window', read('trip-places.js'))(sandbox);
+  return sandbox.TRIP_PLACES || [];
+})();
 
 /* Destinations that recur across days share a group so picking one consumes it. */
 const GROUP_ALIASES = {
@@ -66,25 +74,6 @@ const GROUP_ALIASES = {
   'okutama': /okutama|nippara/i,
   'mito': /mito|kairakuen/i,
 };
-
-// coords already living in map.html
-const mapPlaces = [...mapf.matchAll(
-  /\{\s*day:\s*(\d+),\s*time:"([^"]*)",\s*name:"([^"]*)",\s*lat:\s*([\d.]+),\s*lon:\s*([\d.]+)([^}]*)\}/g
-)].map(m => ({
-  day: +m[1], time: m[2], name: decode(m[3]),
-  lat: +m[4], lon: +m[5],
-  shop: /shop:\s*true/.test(m[6]),
-  // Fixed stops belonging to a specific destination (Okutama Station, the
-  // Nippara caves) must only appear when that destination is the day's pick —
-  // otherwise the Day 2 map shows Okutama while you are in Chiba.
-  group: (function (nm) {
-    for (var g in GROUP_ALIASES) if (GROUP_ALIASES[g].test(nm)) return g;
-    return null;
-  })(decode(m[3])),
-  photo: (m[6].match(/photo:"([^"]*)"/) || [])[1] || null,
-  transport: (m[6].match(/transport:"([^"]*)"/) || [])[1] || null,
-  note: (m[6].match(/note:"([^"]*)"/) || [])[1] || null,
-}));
 
 /* coordinate lookup: map.html first (trip-specific), then coords.json */
 const coordIndex = [
@@ -125,6 +114,15 @@ const NOT_A_PLACE = [
   /^jr to shinagawa/i, /conbini haul/i, /^an aquarium$/i, /standing soba/i,
 ];
 const isPlace = name => !NOT_A_PLACE.some(re => re.test(decode(name)));
+
+/* An option that covers two destinations claims both, so the map keeps the
+ * Enoshima stops when "Kamakura + Enoshima" is picked, and picking it also
+ * consumes standalone Enoshima. */
+const ALSO_CONSUMES = {
+  // List every destination the option covers. Stating both makes this
+  // independent of which one `group` happened to resolve to.
+  'kamakura-enoshima': ['kamakura', 'enoshima'],
+};
 
 const groupFor = name => {
   const d = decode(name);
@@ -208,6 +206,7 @@ for (const panel of panels) {
         default: /class="opt-card[^"]*\bpick\b/.test(card.slice(0, 60)),
         _abs: cardAbs,
       };
+      if (ALSO_CONSUMES[opt.id]) opt.alsoConsumes = ALSO_CONSUMES[opt.id];
 
       if (place) {
         const c = findCoord(name) || (pinQ && findCoord(decodeURIComponent(pinQ.replace(/\+/g, ' '))));
@@ -369,10 +368,6 @@ if (!process.argv.includes('--report')) {
  * Review by hand, then rename to trip-data.js. Do not edit both.
  */
 window.TRIP_SLOTS = ${JSON.stringify(clean, null, 2)};
-
-/* Fixed stops (hotel, stations, scheduled sights) lifted from map.html. These
- * always happen; the day map draws them alongside whichever options are picked. */
-window.TRIP_PLACES = ${JSON.stringify(mapPlaces, null, 2)};
 `;
   fs.writeFileSync(path.join(ROOT, 'trip-data.generated.js'), out);
   console.log(`\nwrote trip-data.generated.js (${(out.length / 1024).toFixed(1)} KB)`);
