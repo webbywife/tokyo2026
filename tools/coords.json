@@ -25,10 +25,11 @@
     "Thermae-Yu, Shinjuku": "Thermae-Yu",
     "Omoide Yokochō, Shinjuku": "Omoide Yokocho",
     "Edinburgh (珈琲貴族エジンバラ)": "Edinburgh Coffee Shinjuku",
-    "Saint Marc / Veloce, Shinjuku-gyoemmae": "Saint Marc Cafe Shinjuku-gyoemmae",
     "Thermae-Yu — bathe and actually sleep": "Thermae-Yu",
     "Shinjuku Gyoen — sit under the trees": "Shinjuku Gyoen",
-    "Manboo — a net-café booth": "Manboo Shinjuku"
+    "Matsuya — the breakfast set": "Matsuya Kabukicho",
+    "Sushizanmai — 24-hour sushi": "Sushizanmai Kabukicho",
+    "Kaikatsu CLUB — a private booth": "Kaikatsu Club Kabukicho"
   },
   "Busta Shinjuku": {
     "lat": 35.6888,
@@ -166,19 +167,24 @@
     "lon": 139.70627,
     "note": "24/7 kissaten, 4-min walk from the hotel"
   },
-  "Saint Marc Cafe Shinjuku-gyoemmae": {
-    "lat": 35.68887,
-    "lon": 139.7101,
-    "note": "opens 07:00"
-  },
-  "Manboo Shinjuku": {
-    "lat": 35.69024,
-    "lon": 139.7105,
-    "note": "net cafe, ~2-min walk; 24h"
-  },
   "Hotel Gracery Shinjuku": {
     "lat": 35.69556,
     "lon": 139.70228,
     "note": "OSM node 3623054193; Kabukichō 1-19-1, in the Shinjuku Toho Building"
+  },
+  "Matsuya Kabukicho": {
+    "lat": 35.69542,
+    "lon": 139.70677,
+    "note": "24/7 beef-bowl chain, breakfast set from 05:00"
+  },
+  "Sushizanmai Kabukicho": {
+    "lat": 35.69234,
+    "lon": 139.70242,
+    "note": "24/7, OSM amenity=restaurant cuisine=sushi"
+  },
+  "Kaikatsu Club Kabukicho": {
+    "lat": 35.69343,
+    "lon": 139.7032,
+    "note": "24h net cafe, private booths + showers"
   }
 }

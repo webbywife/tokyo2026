@@ -60,14 +60,27 @@ window.TRIP_SLOTS = [
     "kind": "choice",
     "options": [
       {
+        "id": "matsuya-the-breakfast-set",
+        "group": "matsuya-the-breakfast-set",
+        "name": "Matsuya — the breakfast set",
+        "transport": "~5-min walk · open 24 hours",
+        "cost": "¥400–500 · ~$3",
+        "note": "The right answer to landing at dawn: a proper hot Japanese breakfast — grilled salmon or nattō, rice, miso soup, raw egg — for about three dollars, served all night. Order on the machine at the door. Kabukichō has half a dozen of these within five minutes and none of them ever close.",
+        "photo": null,
+        "default": true,
+        "lat": 35.69542,
+        "lon": 139.70677,
+        "_coordSrc": "coords.json/alias"
+      },
+      {
         "id": "edinburgh",
         "group": "edinburgh",
         "name": "Edinburgh (珈琲貴族エジンバラ)",
         "transport": "~9-min walk · open 24 hours",
         "cost": "$6–9",
-        "note": "An old-school kissaten, and one of the few places actually open when you land — every chain here opens at 07:00. A ~9-min walk south now we are in Kabukichō, rather than around the corner. Coffee and a proper sit-down before you crash. Smoking is separated, not banned.",
+        "note": "A proper old-school kissaten — velvet chairs, siphon coffee, thick toast — and open around the clock. Nine minutes south now rather than around the corner, so this is the one you walk to because you want it, not because it is closest. Smoking is separated, not banned.",
         "photo": null,
-        "default": true,
+        "default": false,
         "lat": 35.69043,
         "lon": 139.70627,
         "_coordSrc": "coords.json/alias"
@@ -84,16 +97,16 @@ window.TRIP_SLOTS = [
         "pinnable": false
       },
       {
-        "id": "saint-marc-veloce-shinjuku-gyoemmae",
-        "group": "saint-marc-veloce-shinjuku-gyoemmae",
-        "name": "Saint Marc / Veloce, Shinjuku-gyoemmae",
-        "transport": "~13-min walk · opens 07:00",
-        "cost": "$4–7",
-        "note": "If you sleep past seven — two chain cafés a few doors apart by the Shinjuku-gyoemmae exit, both open at 07:00. Cheap and fast, but ~13 min away now: worth it only if you were heading to the Gyoen anyway.",
+        "id": "sushizanmai-24-hour-sushi",
+        "group": "sushizanmai-24-hour-sushi",
+        "name": "Sushizanmai — 24-hour sushi",
+        "transport": "~4-min walk · open 24 hours",
+        "cost": "$12–25",
+        "note": "Sushi at seven in the morning is an extremely Kabukichō thing to do, and this branch never shuts. Not the cheapest breakfast on the list, but it is the one you will still be telling people about.",
         "photo": null,
         "default": false,
-        "lat": 35.68887,
-        "lon": 139.7101,
+        "lat": 35.69234,
+        "lon": 139.70242,
         "_coordSrc": "coords.json/alias"
       },
       {
@@ -160,16 +173,16 @@ window.TRIP_SLOTS = [
         "_coordSrc": "coords.json/alias"
       },
       {
-        "id": "manboo-a-net-cafe-booth",
-        "group": "manboo-a-net-cafe-booth",
-        "name": "Manboo — a net-café booth",
-        "transport": "~12-min walk · 24 hours",
+        "id": "kaikatsu-club-a-private-booth",
+        "group": "kaikatsu-club-a-private-booth",
+        "name": "Kaikatsu CLUB — a private booth",
+        "transport": "~3-min walk · 24 hours",
         "cost": "¥1,500–2,500 · ~$10–17",
-        "note": "The cheap, unglamorous fallback: a private reclining booth, free drinks, showers, and nobody minding if you sleep for five hours. Half the price of the onsen — but ~12 min away now against the onsen’s 4, which makes it a much weaker second place than it used to be.",
+        "note": "The cheap, unglamorous fallback, and now three minutes away instead of twelve: a private reclining booth, free drinks, showers, and nobody minding if you sleep for five hours. Less pleasant than the onsen and half the price — a much better second place than the old one was.",
         "photo": null,
         "default": false,
-        "lat": 35.69024,
-        "lon": 139.7105,
+        "lat": 35.69343,
+        "lon": 139.7032,
         "_coordSrc": "coords.json/alias"
       }
     ]
