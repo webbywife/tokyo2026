@@ -119,8 +119,68 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
 
     maps[day] = { map: map, layer: L.layerGroup().addTo(map) };
+    addFullscreenButton(host, day);
     return maps[day];
   }
+
+  /* ---------- full screen ---------- */
+
+  /* While a map is full screen it covers the tab bar, so the ✕ and Escape are the
+   * only ways out — which is why the button grows and stays pinned top-right. */
+  function fsButton(host) { return host.querySelector('.daymap-fs-btn'); }
+
+  function addFullscreenButton(host, day) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'daymap-fs-btn';
+    btn.textContent = '⤢';
+    btn.title = 'Expand map';
+    btn.setAttribute('aria-label', 'Expand map to full screen');
+    // Leaflet swallows clicks on anything sitting over the map unless told not to.
+    if (L.DomEvent) { L.DomEvent.disableClickPropagation(btn); L.DomEvent.disableScrollPropagation(btn); }
+    btn.addEventListener('click', function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      toggleFullscreen(day);
+    });
+    host.appendChild(btn);
+  }
+
+  function setFullscreen(day, on) {
+    var m = maps[day];
+    var host = document.getElementById('daymap-' + day);
+    if (!m || !host) return;
+
+    host.classList.toggle('is-fullscreen', on);
+    document.body.classList.toggle('daymap-open', on);
+    // Scrolling the map area free-hand only makes sense once it owns the screen.
+    if (on) m.map.scrollWheelZoom.enable(); else m.map.scrollWheelZoom.disable();
+
+    var btn = fsButton(host);
+    if (btn) {
+      btn.textContent = on ? '✕' : '⤢';
+      btn.title = on ? 'Close full screen' : 'Expand map';
+      btn.setAttribute('aria-label', on ? 'Exit full screen' : 'Expand map to full screen');
+    }
+    // The element just changed size, so Leaflet has to re-measure before the
+    // bounds it fits to mean anything.
+    setTimeout(function () { m.map.invalidateSize(); draw(day, lastResolved); }, 60);
+  }
+
+  function openDay() {
+    var el = document.querySelector('.daymap.is-fullscreen');
+    return el ? el.id.replace('daymap-', '') : null;
+  }
+
+  function toggleFullscreen(day) {
+    var host = document.getElementById('daymap-' + day);
+    if (host) setFullscreen(day, !host.classList.contains('is-fullscreen'));
+  }
+
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Escape') return;
+    var d = openDay();
+    if (d) setFullscreen(d, false);
+  });
 
   function draw(day, resolvedSlots) {
     var m = ensureMap(day);
@@ -161,5 +221,5 @@
     }, 60);
   });
 
-  window.TripDayMaps = { update: update, draw: draw };
+  window.TripDayMaps = { update: update, draw: draw, fullscreen: setFullscreen };
 })();
