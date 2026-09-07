@@ -119,6 +119,8 @@ wrangler secret put TRIP_KEY < .trip-key
 npm test              # 31 tests, no dependencies needed
 npm run extract       # re-parse itinerary.html -> trip-data.generated.js
 npm run extract:report  # what the extractor found, writes nothing
+npm run rail          # re-trace the rail corridors from OSM -> trip-routes.js
+npm run rail:report   # what it traced, writes nothing
 node tools/build.cjs  # assemble dist/ (explicit allowlist, not the repo root)
 
 npm run deploy:worker # manual worker deploy
@@ -140,3 +142,38 @@ Re-run it after editing the HTML rather than hand-syncing two files.
 
 That distinction matters: without it, picking the Okutama day trip would grey out
 Okutama's own afternoon.
+
+### Transit
+
+Two different things, deliberately kept apart.
+
+**Directions are deep links.** Every option card, every day-map pin and every leg
+of a day's route offers Google Maps transit directions — from the hotel on the
+option cards and the whole-trip map, leg-by-leg on the day maps. Live departures,
+platforms and delays come from there, because a page built months ahead cannot
+know whether the Enoden is running today.
+
+**Route shapes are traced from OpenStreetMap.** `tools/rail.cjs` pulls the real
+track geometry for the corridors this trip uses, clips each to the stations we
+actually travel between, simplifies it, and writes `trip-routes.js`. The day maps
+draw that instead of a straight line for any leg over 12 km that matches a
+corridor, so Day 2 follows the Ōme valley rather than flying over the mountains.
+Anything with no traced corridor — the Haneda airport bus, a walk between temples
+— stays dashed, which is the honest signal.
+
+| Corridor | Traced | Real line |
+| --- | --- | --- |
+| Keiō · Shinjuku → Chōfu | 15.5 km | 15.5 km |
+| JR Chūō + Ōme · Shinjuku → Okutama | 63.9 km | 64.4 km |
+| JR Jōban · Ueno → Katsuta | 121.0 km | 121.0 km |
+| JR Shōnan–Shinjuku · Shinjuku → Kamakura | 54.4 km | ~54 km |
+| Enoden · Kamakura → Enoshima | 6.6 km | ~6.5 km |
+| Odakyū · Katase-Enoshima → Shinjuku | 59.2 km | 56.9 km |
+
+These are **shapes only** — no timetable, no routing engine. The tool refuses to
+emit a corridor that traces shorter than the straight line between its anchors,
+or more than 2.2x it, because both mean the stitcher grabbed the wrong track.
+
+Output is committed and served with the site, so the page never calls Overpass at
+runtime; it has to work on a platform with one bar. Re-run `npm run rail` only
+when a corridor changes. Geometry © OpenStreetMap contributors (ODbL).

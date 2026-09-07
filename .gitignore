@@ -6,3 +6,4 @@ node_modules/
 .trip-key
 dist/
 credentials.yml
+tools/.rail-cache/

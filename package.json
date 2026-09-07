@@ -7,6 +7,8 @@
     "test": "node --test test/*.test.js test/*.test.mjs",
     "extract": "node tools/extract.cjs",
     "extract:report": "node tools/extract.cjs --report",
+    "rail": "node tools/rail.cjs",
+    "rail:report": "node tools/rail.cjs --report --discover",
     "deploy:worker": "wrangler deploy",
     "deploy:site": "wrangler pages deploy . --project-name tokyo2026 --commit-dirty=true",
     "dev:worker": "wrangler dev",

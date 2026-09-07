@@ -12,6 +12,7 @@
   'use strict';
 
   var places = window.TRIP_PLACES || [];
+  var routes = window.TRIP_ROUTES || [];
 
   /* Transit directions are a deep link, not a drawn rail line. Real transit
    * geometry needs a routing engine (Google's terms forbid drawing their routes
@@ -29,6 +30,32 @@
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
+  }
+
+  /** Kilometres between two [lat,lon]-ish points. */
+  function km(a, b) {
+    var rad = Math.PI / 180;
+    var x = ((b.lon != null ? b.lon : b[1]) - (a.lon != null ? a.lon : a[1])) * rad *
+            Math.cos(((a.lat != null ? a.lat : a[0]) + (b.lat != null ? b.lat : b[0])) / 2 * rad);
+    var y = ((b.lat != null ? b.lat : b[0]) - (a.lat != null ? a.lat : a[0])) * rad;
+    return Math.sqrt(x * x + y * y) * 6371;
+  }
+
+  /* A traced corridor is anchored at stations, but the leg it stands in for runs
+   * between whatever we pinned — a cave 6 km up the valley, a shop by the exit.
+   * So match generously at both ends, and only for legs long enough that a
+   * straight line was actually misleading. */
+  var CORRIDOR_TOL_KM = 12;
+
+  function corridorFor(day, a, b) {
+    for (var i = 0; i < routes.length; i++) {
+      var r = routes[i];
+      if (String(r.day) !== String(day) || !r.path || r.path.length < 2) continue;
+      if (Math.max(km(a, r.from), km(b, r.to)) <= CORRIDOR_TOL_KM) return { route: r, path: r.path };
+      if (Math.max(km(a, r.to), km(b, r.from)) <= CORRIDOR_TOL_KM)
+        return { route: r, path: r.path.slice().reverse() };
+    }
+    return null;
   }
 
   function dirLink(from, to, label) {
@@ -220,14 +247,32 @@
      * under it to give a thumb something to hit. */
     for (var i = 0; i < pts.length - 1; i++) {
       var a = pts[i], z = pts[i + 1];
-      var leg = [[a.lat, a.lon], [z.lat, z.lon]];
+      var corr = km(a, z) > CORRIDOR_TOL_KM ? corridorFor(day, a, z) : null;
       var popup = '<b>' + (i + 1) + ' → ' + (i + 2) + '</b><br>' +
                   esc(a.name) + ' <b>→</b> ' + esc(z.name) +
+                  (corr ? '<br><span class="daymap-line">' + esc(corr.route.label) +
+                          ' · ' + corr.route.km + ' km of track</span>' : '') +
                   dirLink(a, z, 'Transit directions');
-      L.polyline(leg, { color: color, weight: 3, opacity: 0.55, dashArray: '6,6' })
-        .bindPopup(popup).addTo(m.layer);
-      L.polyline(leg, { color: color, weight: 16, opacity: 0 })
-        .bindPopup(popup).addTo(m.layer);
+
+      if (corr) {
+        /* Solid for real traced track, so it reads differently from the dashed
+         * "we go from here to there somehow" line. The stubs join the pins to
+         * the railhead, which is honestly the walk/bus at each end. */
+        L.polyline(corr.path, { color: color, weight: 4, opacity: 0.85 })
+          .bindPopup(popup).addTo(m.layer);
+        L.polyline(corr.path, { color: color, weight: 16, opacity: 0 })
+          .bindPopup(popup).addTo(m.layer);
+        [[[a.lat, a.lon], corr.path[0]], [corr.path[corr.path.length - 1], [z.lat, z.lon]]]
+          .forEach(function (stub) {
+            L.polyline(stub, { color: color, weight: 2, opacity: 0.4, dashArray: '3,5' }).addTo(m.layer);
+          });
+      } else {
+        var leg = [[a.lat, a.lon], [z.lat, z.lon]];
+        L.polyline(leg, { color: color, weight: 3, opacity: 0.55, dashArray: '6,6' })
+          .bindPopup(popup).addTo(m.layer);
+        L.polyline(leg, { color: color, weight: 16, opacity: 0 })
+          .bindPopup(popup).addTo(m.layer);
+      }
     }
 
     pts.forEach(function (p, i) {
@@ -239,7 +284,14 @@
         .addTo(m.layer);
     });
 
-    try { m.map.fitBounds(L.latLngBounds(latlngs).pad(0.18)); } catch (e) {}
+    var bounds = latlngs.slice();
+    for (var c = 0; c < routes.length; c++) {
+      if (String(routes[c].day) !== String(day)) continue;
+      var near = pts.some(function (p) { return km(p, routes[c].from) <= CORRIDOR_TOL_KM; }) &&
+                 pts.some(function (p) { return km(p, routes[c].to) <= CORRIDOR_TOL_KM; });
+      if (near) bounds = bounds.concat(routes[c].path);
+    }
+    try { m.map.fitBounds(L.latLngBounds(bounds).pad(0.12)); } catch (e) {}
     setTimeout(function () { m.map.invalidateSize(); }, 0);
   }
 
