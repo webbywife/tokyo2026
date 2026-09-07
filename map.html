@@ -102,7 +102,46 @@
   .filter-btn:hover{opacity:0.75;}
   .filter-btn.off:hover{opacity:0.55;}
 
-  #map{flex:1; min-height:0;}
+  #map{flex:1; min-height:0; position:relative;}
+
+  /* Full screen, matching the per-day maps in itinerary.html. Same CSS-overlay
+   * approach rather than the Fullscreen API, because iOS Safari won't take a
+   * <div> fullscreen. The title block goes, the day filters stay — they're the
+   * map's controls, and losing them mid-trip would be worse than the space. */
+  .map-fs-btn{
+    position:absolute; top:10px; right:10px; z-index:1003;
+    width:34px; height:34px; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    font:600 15px/1 'Inter', sans-serif; color:var(--text);
+    background:rgba(255,255,255,0.94);
+    border:1px solid var(--line); border-radius:9px;
+    box-shadow:0 1px 5px rgba(42,38,34,0.28);
+    cursor:pointer;
+  }
+  .map-fs-btn:hover{background:#fff;}
+  body.map-fullscreen .back-link,
+  body.map-fullscreen .eyebrow,
+  body.map-fullscreen h1{display:none;}
+  /* Taking the header out of flow is what makes the map actually fill the screen:
+   * eight filter buttons wrap to ~230px on a phone, a third of the viewport. It
+   * slides back in over the map on demand instead of permanently costing that. */
+  body.map-fullscreen header{
+    position:absolute; top:0; left:0; right:0; z-index:1002;
+    padding:62px 10px 12px; border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,0.96);
+    max-height:70vh; overflow-y:auto;
+    transform:translateY(-101%);
+    transition:transform 0.18s ease;
+  }
+  body.map-fullscreen.filters-open header{transform:none;}
+  /* the zoom control ghosts through the translucent sheet otherwise */
+  body.map-fullscreen.filters-open .leaflet-control-zoom{visibility:hidden;}
+  body.map-fullscreen .map-fs-btn{top:14px; right:14px; width:40px; height:40px; font-size:17px;}
+  .map-layers-btn{display:none;}
+  body.map-fullscreen .map-layers-btn{
+    display:flex; top:14px; right:62px; width:40px; height:40px; font-size:16px;
+  }
+  body.map-fullscreen.filters-open .map-layers-btn{background:var(--panel-2);}
 
   .leaflet-popup-content-wrapper{
     background:var(--panel);
@@ -368,6 +407,58 @@
   // Fit bounds to the scheduled trips (skip the hidden "Quieter picks" so the view stays tight)
   const allLatLngs = places.filter(p => p.day !== 6).map(p => [p.lat, p.lon]);
   map.fitBounds(allLatLngs, { padding: [30,30] });
+
+  // Full screen — the header costs real height on a phone, where a wrapping row
+  // of eight filter buttons can take a third of the screen.
+  const fsBtn = document.createElement('button');
+  fsBtn.type = 'button';
+  fsBtn.className = 'map-fs-btn';
+  fsBtn.textContent = '⤢';
+  fsBtn.title = 'Expand map';
+  fsBtn.setAttribute('aria-label', 'Expand map to full screen');
+  // Leaflet swallows clicks on anything over the map unless told not to.
+  L.DomEvent.disableClickPropagation(fsBtn);
+  L.DomEvent.disableScrollPropagation(fsBtn);
+  document.getElementById('map').appendChild(fsBtn);
+
+  // In full screen the filters slide in over the map instead of holding a third
+  // of the viewport open permanently.
+  const layersBtn = document.createElement('button');
+  layersBtn.type = 'button';
+  layersBtn.className = 'map-fs-btn map-layers-btn';
+  layersBtn.textContent = '☰';
+  layersBtn.title = 'Filters';
+  layersBtn.setAttribute('aria-label', 'Show map filters');
+  L.DomEvent.disableClickPropagation(layersBtn);
+  L.DomEvent.disableScrollPropagation(layersBtn);
+  document.getElementById('map').appendChild(layersBtn);
+
+  layersBtn.addEventListener('click', ev => {
+    ev.preventDefault(); ev.stopPropagation();
+    const open = document.body.classList.toggle('filters-open');
+    layersBtn.setAttribute('aria-label', open ? 'Hide map filters' : 'Show map filters');
+  });
+
+  function setMapFullscreen(on){
+    document.body.classList.toggle('map-fullscreen', on);
+    if (!on) document.body.classList.remove('filters-open');   // don't leave it armed
+    fsBtn.textContent = on ? '✕' : '⤢';
+    fsBtn.title = on ? 'Close full screen' : 'Expand map';
+    fsBtn.setAttribute('aria-label', on ? 'Exit full screen' : 'Expand map to full screen');
+    // Deliberately no refit: keep whatever the reader had panned or zoomed to,
+    // and just give them more of it. Leaflet still has to re-measure.
+    setTimeout(() => map.invalidateSize(), 60);
+  }
+
+  fsBtn.addEventListener('click', ev => {
+    ev.preventDefault(); ev.stopPropagation();
+    setMapFullscreen(!document.body.classList.contains('map-fullscreen'));
+  });
+  document.addEventListener('keydown', ev => {
+    if (ev.key !== 'Escape' || !document.body.classList.contains('map-fullscreen')) return;
+    if (document.body.classList.contains('filters-open')) document.body.classList.remove('filters-open');
+    else setMapFullscreen(false);
+  });
 </script>
 </body>
 </html>
