@@ -275,7 +275,7 @@
 
   // Home base — every day starts and ends here, so "how do I get there" means
   // "from the hotel" on a map with no running order.
-  const HOME = places.find(p => /APA Hotel/.test(p.name)) || { lat: 35.69003, lon: 139.70892 };
+  const HOME = places.find(p => /Gracery/.test(p.name)) || { lat: 35.69556, lon: 139.70228 };
   const transitUrl = (from, to) =>
     `https://www.google.com/maps/dir/?api=1&origin=${from.lat},${from.lon}` +
     `&destination=${to.lat},${to.lon}&travelmode=transit`;

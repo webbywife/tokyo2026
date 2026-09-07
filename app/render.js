@@ -21,8 +21,8 @@
 
   /* Home base, so "how do I get there" has an origin. Derived rather than
    * hardcoded so moving the hotel in trip-places.js moves every link. */
-  var HOME = (window.TRIP_PLACES || []).filter(function (p) { return /APA Hotel/.test(p.name); })[0]
-          || { lat: 35.69003, lon: 139.70892 };
+  var HOME = (window.TRIP_PLACES || []).filter(function (p) { return /Gracery/.test(p.name); })[0]
+          || { lat: 35.69556, lon: 139.70228 };
 
   /* A directions deep link beats a drawn route here: it gives live departures,
    * platforms and delays, and needs no API key on a static page. */

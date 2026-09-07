@@ -30,11 +30,6 @@
     "Shinjuku Gyoen — sit under the trees": "Shinjuku Gyoen",
     "Manboo — a net-café booth": "Manboo Shinjuku"
   },
-  "APA Hotel Shinjuku-Gyoemmae": {
-    "lat": 35.69003,
-    "lon": 139.70892,
-    "note": "block-level (Shinjuku 2-2-8); OSM has no APA buildings tagged in Shinjuku ward"
-  },
   "Busta Shinjuku": {
     "lat": 35.6888,
     "lon": 139.70074
@@ -180,5 +175,10 @@
     "lat": 35.69024,
     "lon": 139.7105,
     "note": "net cafe, ~2-min walk; 24h"
+  },
+  "Hotel Gracery Shinjuku": {
+    "lat": 35.69556,
+    "lon": 139.70228,
+    "note": "OSM node 3623054193; Kabukichō 1-19-1, in the Shinjuku Toho Building"
   }
 }
