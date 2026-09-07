@@ -12,6 +12,29 @@
   'use strict';
 
   var places = window.TRIP_PLACES || [];
+
+  /* Transit directions are a deep link, not a drawn rail line. Real transit
+   * geometry needs a routing engine (Google's terms forbid drawing their routes
+   * on an OSM map, and JR East publishes no open GTFS) — and a link is the
+   * better answer anyway: it gives live departures, platforms and delays that a
+   * baked-in polyline never could. */
+  function transitUrl(from, to) {
+    return 'https://www.google.com/maps/dir/?api=1' +
+      '&origin=' + from.lat + ',' + from.lon +
+      '&destination=' + to.lat + ',' + to.lon +
+      '&travelmode=transit';
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function dirLink(from, to, label) {
+    return '<a class="daymap-dir" href="' + transitUrl(from, to) +
+           '" target="_blank" rel="noopener">🚉 ' + esc(label) + ' ↗</a>';
+  }
   var DAY_COLOR = { '1': '#C0362C', '2': '#A8641C', '3': '#2E7D4F', '4': '#6B4FB0', 'rain': '#6E6A66' };
   var maps = {};
   var lastResolved = null;
@@ -192,11 +215,27 @@
     var color = DAY_COLOR[day] || '#C0362C';
     var latlngs = pts.map(function (p) { return [p.lat, p.lon]; });
 
-    L.polyline(latlngs, { color: color, weight: 3, opacity: 0.55, dashArray: '6,6' }).addTo(m.layer);
+    /* One line per leg rather than a single polyline, so each hop can carry its
+     * own directions. The visible line is thin, so an invisible fat one sits
+     * under it to give a thumb something to hit. */
+    for (var i = 0; i < pts.length - 1; i++) {
+      var a = pts[i], z = pts[i + 1];
+      var leg = [[a.lat, a.lon], [z.lat, z.lon]];
+      var popup = '<b>' + (i + 1) + ' → ' + (i + 2) + '</b><br>' +
+                  esc(a.name) + ' <b>→</b> ' + esc(z.name) +
+                  dirLink(a, z, 'Transit directions');
+      L.polyline(leg, { color: color, weight: 3, opacity: 0.55, dashArray: '6,6' })
+        .bindPopup(popup).addTo(m.layer);
+      L.polyline(leg, { color: color, weight: 16, opacity: 0 })
+        .bindPopup(popup).addTo(m.layer);
+    }
 
     pts.forEach(function (p, i) {
+      var next = pts[i + 1];
+      var html = '<b>' + (p.time ? esc(p.time) + ' — ' : '') + esc(p.name) + '</b>';
+      if (next) html += dirLink(p, next, 'Transit to ' + next.name);
       L.marker([p.lat, p.lon], { icon: numberedIcon(i + 1, color, p.fixed) })
-        .bindPopup('<b>' + (p.time ? p.time + ' — ' : '') + p.name + '</b>')
+        .bindPopup(html)
         .addTo(m.layer);
     });
 

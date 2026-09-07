@@ -273,6 +273,15 @@
 
   const places = window.TRIP_PLACES || [];
 
+  // Home base — every day starts and ends here, so "how do I get there" means
+  // "from the hotel" on a map with no running order.
+  const HOME = places.find(p => /APA Hotel/.test(p.name)) || { lat: 35.69003, lon: 139.70892 };
+  const transitUrl = (from, to) =>
+    `https://www.google.com/maps/dir/?api=1&origin=${from.lat},${from.lon}` +
+    `&destination=${to.lat},${to.lon}&travelmode=transit`;
+  const transitLink = to => to === HOME ? '' :
+    `<a class="sv-link" href="${transitUrl(HOME, to)}" target="_blank" rel="noopener">🚉 Transit from the hotel ↗</a>`;
+
   const transitPlaces = [
     { kind:"rail", name:"Shinjuku Station", lat:35.69003, lon:139.70047, note:"JR Shōnan–Shinjuku Line to Yokohama & Kamakura; Odakyū Romancecar to Hakone & Enoshima; the Sightseeing Center sells the passes" },
     { kind:"bus",  name:"Busta Shinjuku", lat:35.68660, lon:139.70027, note:"Expressway bus terminal above the station — Airport Limousine Bus to/from Haneda" },
@@ -368,6 +377,7 @@
       `<div class="popup-name">${p.name}</div>` +
       `<div class="popup-note">${p.note}</div>` +
       (p.transport ? `<div class="popup-transport"><span class="transport-label">Getting there</span>${p.transport}</div>` : '') +
+      transitLink(p) +
       `<a class="sv-link" href="${streetViewUrl}" target="_blank" rel="noopener">📷 Open in Street View ↗</a>` +
       `</div>`,
       { maxWidth: 260 }
@@ -402,6 +412,7 @@
       `<div class="popup-day" style="color:${info.color}">${info.emoji} ${info.label}</div>` +
       `<div class="popup-name">${p.name}</div>` +
       `<div class="popup-note">${p.note}</div>` +
+      transitLink(p) +
       `<a class="sv-link" href="${streetViewUrl}" target="_blank" rel="noopener">📷 Open in Street View ↗</a>` +
       `</div>`,
       { maxWidth: 260 }

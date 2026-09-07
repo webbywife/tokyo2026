@@ -19,6 +19,33 @@
   var byId = {};
   slots.forEach(function (s) { byId[s.id] = s; });
 
+  /* Home base, so "how do I get there" has an origin. Derived rather than
+   * hardcoded so moving the hotel in trip-places.js moves every link. */
+  var HOME = (window.TRIP_PLACES || []).filter(function (p) { return /APA Hotel/.test(p.name); })[0]
+          || { lat: 35.69003, lon: 139.70892 };
+
+  /* A directions deep link beats a drawn route here: it gives live departures,
+   * platforms and delays, and needs no API key on a static page. */
+  function transitUrl(to) {
+    return 'https://www.google.com/maps/dir/?api=1' +
+      '&origin=' + HOME.lat + ',' + HOME.lon +
+      '&destination=' + to.lat + ',' + to.lon +
+      '&travelmode=transit';
+  }
+
+  /* Added from the data rather than written into all 87 cards by hand — and
+   * idempotent, since paint() runs on every state change. */
+  function addTransitLink(card, opt) {
+    if (!opt.lat || !opt.lon) return;                 // travel modes have no pin
+    var existing = card.querySelector('.opt-transit');
+    if (existing) { existing.href = transitUrl(opt); return; }
+    var a = h('a', 'pin opt-transit', '🚉 Transit ↗');
+    a.href = transitUrl(opt);
+    a.target = '_blank';
+    a.rel = 'noopener';
+    card.appendChild(a);
+  }
+
   function h(tag, cls, text) {
     var el = document.createElement(tag);
     if (cls) el.className = cls;
@@ -43,6 +70,7 @@
 
         card.classList.toggle('pick', !!opt.isPicked);
         card.classList.toggle('is-done', !!opt.doneBy && !opt.isPicked);
+        addTransitLink(card, opt);
 
         // the tag chip
         var top = card.querySelector('.opt-top');
