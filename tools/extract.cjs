@@ -111,7 +111,7 @@ function findCoord(name) {
 /* Options that are travel modes or filler, not destinations. No pin, ever. */
 const NOT_A_PLACE = [
   /^taxi/i, /^straight to/i, /^wherever/i, /limousine bus/i, /^keiky/i,
-  /^jr to shinagawa/i, /conbini haul/i, /^an aquarium$/i, /standing soba/i,
+  /^jr to shinagawa/i, /conbini haul/i, /^an aquarium$/i, /standing soba/i, /^skip it/i,
 ];
 const isPlace = name => !NOT_A_PLACE.some(re => re.test(decode(name)));
 

@@ -21,19 +21,23 @@
   "d1-ease-in-outing-pick-one":             { "scope": "fork",   "title": "Ease-in outing — pick one" },
   "d1-dinner-wherever-you-ended-up":        { "scope": "detail", "title": "Dinner — wherever you ended up" },
   "d1-a-free-night-view-or-bed":            { "scope": "detail", "title": "A free night view, or bed" },
+  "d1-shopping-the-electronics-sweep":      { "scope": "detail", "title": "Shopping — the electronics sweep" },
 
   "d2-pick":                                { "scope": "fork",   "title": "Day 2 — pick your whole-day trip" },
   "d2-pick-your-afternoon":                 { "scope": "detail", "title": "Pick your afternoon" },
+  "d2-shopping-stationery-clothes":         { "scope": "detail", "title": "Shopping — stationery & clothes" },
   "d2-dinner-near-the-hotel":               { "scope": "detail", "title": "One more Okutama stop" },
 
   "d3-pick":                                { "scope": "fork",   "title": "Day 3 — pick your whole-day trip" },
   "d3-second-mito-stop":                    { "scope": "detail", "title": "Second Mito stop" },
   "d3-one-more-or-head-back":               { "scope": "detail", "title": "One more, or head back" },
-  "d3-limited-express-back-to-ueno":        { "scope": "detail", "title": "Further afield in Ibaraki" },
+  "d3-shopping-food-to-bring-home":         { "scope": "detail", "title": "Shopping — food to bring home" },
+  "d3-back-to-shinjuku":                    { "scope": "detail", "title": "Further afield in Ibaraki" },
 
   "d4-pick":                                { "scope": "fork",   "title": "Day 4 — pick your whole-day trip" },
   "d4-on-enoshima-pick-your-depth":         { "scope": "detail", "title": "On Enoshima — pick your depth" },
   "d4-head-to-haneda-airport":              { "scope": "detail", "title": "Head to Haneda Airport" },
+  "d4-last-shopping-run-the-take-home-haul": { "scope": "detail", "title": "Last shopping run — the take-home haul" },
   "d4-depart-pr-422-to-manila":             { "scope": "detail", "title": "Quieter Kamakura add-ons" },
 
   "drain-pick":   { "scope": "fork", "title": "Weatherproof — the big indoor one" },
