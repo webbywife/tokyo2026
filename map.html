@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="trip-places.js"></script>
+<script src="trip-data.js"></script>
+<script src="app/exclusion.js"></script>
+<script src="app/store.js"></script>
 <style>
   :root{
     --bg:#FFFFFF;
@@ -99,6 +102,7 @@
     font-size:9px; line-height:1;
   }
   .filter-btn.off{opacity:0.35;}
+  .filter-btn.is-mode{border-color:var(--d1); color:var(--d1);}
   .filter-btn:hover{opacity:0.75;}
   .filter-btn.off:hover{opacity:0.55;}
 
@@ -322,7 +326,36 @@
     if (!OFF_BY_DEFAULT.has(String(d))) dayLayers[d].addTo(map);
   });
 
-  places.forEach(p => {
+  /* ---------- which pins belong to a choice we actually made ----------
+   * A pin tagged with a `group` belongs to one of the option cards. It draws
+   * only when that option is the current pick, so the map shows the trip you
+   * chose rather than every alternative at once. Untagged pins are fixed stops
+   * and always draw. If the data or the engine is missing we fall back to
+   * showing everything — the map must never come up empty.
+   */
+  let showAll = false;
+
+  function pickedGroups() {
+    if (showAll) return null;
+    const slots = window.TRIP_SLOTS || [];
+    if (!slots.length || !window.Exclusion) return null;
+    const choices = window.TripStore ? window.TripStore.choices() : {};
+    const picked = {};
+    try {
+      window.Exclusion.resolve(slots, choices).forEach(slot => {
+        slot.options.forEach(o => {
+          if (!o.isPicked) return;
+          if (o.group) picked[o.group] = true;
+          (o.alsoConsumes || []).forEach(g => { picked[g] = true; });
+        });
+      });
+    } catch (e) { console.error('[map] exclusion failed, showing every pin', e); return null; }
+    return picked;
+  }
+
+  const isVisible = (p, picked) => !picked || !p.group || !!picked[p.group];
+
+  function markerFor(p) {
     const color = days[p.day].color;
     const icon = p.shop ? makeCircleIcon(color, '🛍️', 20) : makeIcon(color);
     const marker = L.marker([p.lat, p.lon], { icon });
@@ -331,7 +364,7 @@
       (p.photo ? `<img class="popup-photo" src="${p.photo}" alt="${p.name}" loading="lazy">` : '') +
       `<div class="popup-body">` +
       `<div class="popup-day" style="color:${color}">${days[p.day].label}${p.shop ? ' · 🛍️ Shopping' : ''}</div>` +
-      `<div class="popup-time">${p.time}</div>` +
+      `<div class="popup-time">${p.time === 'pick' ? 'Your pick' : p.time}</div>` +
       `<div class="popup-name">${p.name}</div>` +
       `<div class="popup-note">${p.note}</div>` +
       (p.transport ? `<div class="popup-transport"><span class="transport-label">Getting there</span>${p.transport}</div>` : '') +
@@ -339,8 +372,23 @@
       `</div>`,
       { maxWidth: 260 }
     );
-    marker.addTo(dayLayers[p.day]);
-  });
+    return marker;
+  }
+
+  /* Layer groups are created once and only ever emptied and refilled, so the
+   * day filter toggles keep their state across a re-render. */
+  function renderPins() {
+    const picked = pickedGroups();
+    Object.keys(dayLayers).forEach(d => dayLayers[d].clearLayers());
+    let shown = 0;
+    places.forEach(p => {
+      if (!isVisible(p, picked)) return;
+      markerFor(p).addTo(dayLayers[p.day]);
+      shown++;
+    });
+    return shown;
+  }
+  renderPins();
 
   const transitLayers = {};
   Object.keys(transitTypes).forEach(k => transitLayers[k] = L.layerGroup().addTo(map));
@@ -404,9 +452,37 @@
     filtersEl.appendChild(btn);
   });
 
-  // Fit bounds to the scheduled trips (skip the hidden "Quieter picks" so the view stays tight)
-  const allLatLngs = places.filter(p => p.day !== 6).map(p => [p.lat, p.lon]);
-  map.fitBounds(allLatLngs, { padding: [30,30] });
+  /* An escape hatch back to the old behaviour: filtering by picks hides the
+   * alternatives, but "what else is near Day 3" is a real reason to open this
+   * map, so keep one tap away. */
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn off is-mode';
+  allBtn.innerHTML = `<span class="dot" style="background:#C0362C"></span>All options`;
+  allBtn.title = 'Show every alternative, not just what you picked';
+  allBtn.addEventListener('click', () => {
+    showAll = !showAll;
+    allBtn.classList.toggle('off', !showAll);
+    allBtn.title = showAll ? 'Show only what you picked' : 'Show every alternative, not just what you picked';
+    renderPins();
+  });
+  filtersEl.appendChild(allBtn);
+
+  // Fit bounds to what is actually drawn (skip the hidden "Quieter picks" layer
+  // so the view stays tight).
+  const shownLatLngs = places
+    .filter(p => p.day !== 6 && isVisible(p, pickedGroups()))
+    .map(p => [p.lat, p.lon]);
+  if (shownLatLngs.length) map.fitBounds(shownLatLngs, { padding: [30,30] });
+
+  /* Same shared store the itinerary writes to, so a pick made on one phone
+   * redraws this map on the other within a poll — and instantly in the tab next
+   * door, since both read the same localStorage. Bounds are deliberately not
+   * refitted on update: yanking the view out from under someone mid-pan is
+   * worse than a slightly off-centre map. */
+  if (window.TripStore) {
+    window.TripStore.onChange(renderPins);
+    window.TripStore.start();
+  }
 
   // Full screen — the header costs real height on a phone, where a wrapping row
   // of eight filter buttons can take a third of the screen.
